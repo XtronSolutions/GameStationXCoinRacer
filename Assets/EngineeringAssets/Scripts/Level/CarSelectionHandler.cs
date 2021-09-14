@@ -8,6 +8,7 @@ public class CarSelectionHandler : MonoBehaviour
     [SerializeField] private GameObject _spawnLocation = null;
     [SerializeField] private CarSettings _defualtCarSettings = null;
     [SerializeField] private CinemachineVirtualCamera _virtualCamera = null;
+    [SerializeField] private WayPointPointer _wayPointPointer = null;
     
     
     // Start is called before the first frame update
@@ -20,5 +21,6 @@ public class CarSelectionHandler : MonoBehaviour
         TinyCarController controller = car.GetComponentInChildren<TinyCarController>();
         _virtualCamera.Follow = controller.transform;
         _virtualCamera.LookAt = controller.transform;
+        _wayPointPointer.Controller = controller;
     }
 }

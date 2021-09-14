@@ -45,7 +45,6 @@ public class RaceManager : MonoBehaviour
             if (_currentWayPointIndex == 1)
             {
                 _lapsCounter++;
-                print($"lap {_lapsCounter}");
                 if (_lapsCounter == _requiredNumberOfLaps)
                 {
                     OnRaceDone();
@@ -80,6 +79,11 @@ public class RaceManager : MonoBehaviour
     {
         SceneManager.LoadScene(Constants.MAIN_MENU_SCENE_NAME);
         Time.timeScale = 1;
+    }
+    
+    public Vector3 GetNextWayPointPosition()
+    {
+        return _wayPoints[_currentWayPointIndex].transform.position;
     }
    
 }
