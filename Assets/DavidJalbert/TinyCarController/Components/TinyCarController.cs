@@ -124,8 +124,8 @@ namespace DavidJalbert
         virtual protected void Update()
         {
             // refresh rigid body and collider parameters
-            body.hideFlags = HideFlags.NotEditable;
-            sphereCollider.hideFlags = HideFlags.NotEditable;
+            body.hideFlags = HideFlags.None;
+            sphereCollider.hideFlags = HideFlags.None;
 
             body.mass = bodyMass * (adjustToScale ? cubicScale : 1);
             body.drag = 0;

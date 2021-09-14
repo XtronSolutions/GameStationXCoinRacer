@@ -15,3 +15,4 @@ MonoBehaviour:
   carType: 0
   Name: car1
   CarPrefab: {fileID: 6164663709865427613, guid: 4a9543e0bb9701944b7687ab90bc795c, type: 3}
+  Icon: {fileID: 21300000, guid: 3b4d8c6be7c3c914897ef03e125f8e44, type: 3}

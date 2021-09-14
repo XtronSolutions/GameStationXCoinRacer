@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -23,11 +24,15 @@ public class MainMenuViewController : MonoBehaviour
     [SerializeField] private List<CarSelection> _selecteableCars = new List<CarSelection>();
     [SerializeField] private TextMeshProUGUI _versionText = null;
     [SerializeField] private TextMeshProUGUI _selectedCarName = null;
+    [SerializeField] private List<Button> _selectCarButtons = new List<Button>();
+    [SerializeField] private List<Button> _SelectLevelButtons = new List<Button>();
+    [SerializeField] private List<LevelSettings> _levelsSettings = new List<LevelSettings>();
+    [SerializeField] private Image _selectedMapImage = null;
+    [SerializeField] private TextMeshProUGUI _levelNameText = null;
 
     private int _currentSelectedCarIndex = 0;
+    private int _currentlySelectedLevelIndex = 0;
 
-
-    
     // Start is called before the first frame update
     void Start()
     {
@@ -40,6 +45,29 @@ public class MainMenuViewController : MonoBehaviour
         _currentSelectedCarIndex = 0;
         UpdateSelectedCarVisual(_currentSelectedCarIndex);
         _versionText.text = APP_VERSION;
+
+        for (int i = 0; i < _selectCarButtons.Count; i++)
+        {
+            int index = i;
+            _selectCarButtons[i].image.sprite = _selecteableCars[i].carSettings.Icon;
+            _selectCarButtons[i].onClick.AsObservable().Subscribe(_ => UpdateSelectedCarVisual(index)).AddTo(this);
+        }
+
+        for (int i = 0; i < _levelsSettings.Count; i++)
+        {
+            int index = i;
+            _SelectLevelButtons[i].image.sprite = _levelsSettings[i].Icon;
+            _SelectLevelButtons[i].onClick.AsObservable().Subscribe(_ => OnLevelSelected(index)).AddTo(this);
+        }
+
+        OnLevelSelected(0);
+    }
+
+    private void OnLevelSelected(int i)
+    {
+        _currentlySelectedLevelIndex = i;
+        _selectedMapImage.sprite =  _levelsSettings[i].Icon;
+        _levelNameText.text = _levelsSettings[i].LevelName;
     }
     
     private void OnGoToCarSelection()
@@ -98,6 +126,6 @@ public class MainMenuViewController : MonoBehaviour
     {
         SelectedCar = _selecteableCars[_currentSelectedCarIndex].carSettings;
         //todo: show loading screen
-        SceneManager.LoadScene("Level1");
+        SceneManager.LoadScene(_levelsSettings[_currentlySelectedLevelIndex].LevelName);
     }
 }
