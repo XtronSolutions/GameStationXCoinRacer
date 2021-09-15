@@ -125,7 +125,6 @@ public class MainMenuViewController : MonoBehaviour
     private void StartRace()
     {
         SelectedCar = _selecteableCars[_currentSelectedCarIndex].carSettings;
-        //todo: show loading screen
-        SceneManager.LoadScene(_levelsSettings[_currentlySelectedLevelIndex].LevelName);
+        SceneManager.LoadScene(_levelsSettings[_currentlySelectedLevelIndex].SceneName);
     }
 }

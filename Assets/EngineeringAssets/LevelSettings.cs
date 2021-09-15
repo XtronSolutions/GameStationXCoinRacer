@@ -6,5 +6,6 @@ using UnityEngine;
 public class LevelSettings : ScriptableObject
 {
     public string LevelName;
+    public string SceneName;
     public Sprite Icon;
 }
