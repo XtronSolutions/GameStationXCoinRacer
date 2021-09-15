@@ -15085,8 +15085,8 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 2
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 1
+  m_Center: {x: 0, y: -1, z: 0}
 --- !u!114 &8821308322359275264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15099,7 +15099,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13eb19281dc5d514782f46c6e58033b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  colliderRadius: 2
+  colliderRadius: 1
   bodyMass: 10
   gravityMode: 1
   gravityVelocity: 80
@@ -15134,8 +15134,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  maxAccelerationForward: 50
-  maxSpeedForward: 40
+  maxAccelerationForward: 40
+  maxSpeedForward: 80
   maxAccelerationReverse: 50
   maxSpeedReverse: 20
   brakeStrength: 100
@@ -15175,8 +15175,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  forwardFriction: 40
-  lateralFriction: 80
+  forwardFriction: 20
+  lateralFriction: 60
 --- !u!1 &4713812187399843511
 GameObject:
   m_ObjectHideFlags: 0
