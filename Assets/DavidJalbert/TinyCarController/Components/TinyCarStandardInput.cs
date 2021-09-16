@@ -53,15 +53,15 @@ namespace DavidJalbert
         {
             float motorDelta = getInput(forwardInput) - getInput(reverseInput);
             float steeringDelta = getInput(steerRightInput) - getInput(steerLeftInput);
-            if (getInput(boostInput) == 1 && boostTimer == 0)
-            {
-                boostTimer = boostCoolOff + boostDuration;
-            }
-            else if (boostTimer > 0)
-            {
-                boostTimer = Mathf.Max(boostTimer - Time.deltaTime, 0);
-                carController.setBoostMultiplier(boostTimer > boostCoolOff ? boostMultiplier : 1);
-            }
+            // if (getInput(boostInput) == 1 && boostTimer == 0)
+            // {
+            //     boostTimer = boostCoolOff + boostDuration;
+            // }
+            // else if (boostTimer > 0)
+            // {
+            //     boostTimer = Mathf.Max(boostTimer - Time.deltaTime, 0);
+            //     carController.setBoostMultiplier(boostTimer > boostCoolOff ? boostMultiplier : 1);
+            // }
 
             carController.setSteering(steeringDelta);
             carController.setMotor(motorDelta);

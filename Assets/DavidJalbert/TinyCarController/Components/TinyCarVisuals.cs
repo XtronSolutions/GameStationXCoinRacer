@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -196,6 +197,11 @@ namespace DavidJalbert
                     particlesBoost.Stop();
                 }
             }
+        }
+
+        private void LateUpdate()
+        {
+            vehicleContainer.position = carController.getBodyPosition();
         }
 
         public void stopAllParticles()

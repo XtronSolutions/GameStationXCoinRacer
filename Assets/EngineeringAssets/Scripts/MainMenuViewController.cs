@@ -21,11 +21,13 @@ public class MainMenuViewController : MonoBehaviour
     [SerializeField] private Button _goToMapSelectionButton = null;
     [SerializeField] private Button _backToCarSelectionButton = null;
     [SerializeField] private Button _startRaceButton = null;
+    [SerializeField] private Button _nextCarButton = null;
+    [SerializeField] private Button _prevCarButton = null;
+    [SerializeField] private Button _nextMapButton = null;
+    [SerializeField] private Button _prevMapButton = null;
     [SerializeField] private List<CarSelection> _selecteableCars = new List<CarSelection>();
     [SerializeField] private TextMeshProUGUI _versionText = null;
     [SerializeField] private TextMeshProUGUI _selectedCarName = null;
-    [SerializeField] private List<Button> _selectCarButtons = new List<Button>();
-    [SerializeField] private List<Button> _SelectLevelButtons = new List<Button>();
     [SerializeField] private List<LevelSettings> _levelsSettings = new List<LevelSettings>();
     [SerializeField] private Image _selectedMapImage = null;
     [SerializeField] private TextMeshProUGUI _levelNameText = null;
@@ -45,22 +47,46 @@ public class MainMenuViewController : MonoBehaviour
         _currentSelectedCarIndex = 0;
         UpdateSelectedCarVisual(_currentSelectedCarIndex);
         _versionText.text = APP_VERSION;
+        
+        _nextCarButton.onClick.AddListener(OnNextCar);
+        _prevCarButton.onClick.AddListener(OnPrevCar);
+        _nextMapButton.onClick.AddListener(OnNextMap);
+        _prevMapButton.onClick.AddListener(OnPrevMap);
 
-        for (int i = 0; i < _selectCarButtons.Count; i++)
-        {
-            int index = i;
-            _selectCarButtons[i].image.sprite = _selecteableCars[i].carSettings.Icon;
-            _selectCarButtons[i].onClick.AsObservable().Subscribe(_ => UpdateSelectedCarVisual(index)).AddTo(this);
-        }
-
-        for (int i = 0; i < _levelsSettings.Count; i++)
-        {
-            int index = i;
-            _SelectLevelButtons[i].image.sprite = _levelsSettings[i].Icon;
-            _SelectLevelButtons[i].onClick.AsObservable().Subscribe(_ => OnLevelSelected(index)).AddTo(this);
-        }
+        // for (int i = 0; i < _selectCarButtons.Count; i++)
+        // {
+        //     int index = i;
+        //     _selectCarButtons[i].image.sprite = _selecteableCars[i].carSettings.Icon;
+        //     _selectCarButtons[i].onClick.AsObservable().Subscribe(_ => UpdateSelectedCarVisual(index)).AddTo(this);
+        // }
+        //
+        // for (int i = 0; i < _levelsSettings.Count; i++)
+        // {
+        //     int index = i;
+        //     _SelectLevelButtons[i].image.sprite = _levelsSettings[i].Icon;
+        //     _SelectLevelButtons[i].onClick.AsObservable().Subscribe(_ => OnLevelSelected(index)).AddTo(this);
+        // }
 
         OnLevelSelected(0);
+    }
+
+    private void OnNextMap()
+    {
+        int newIndex = _currentlySelectedLevelIndex + 1;
+        newIndex %= _levelsSettings.Count;
+        OnLevelSelected(newIndex);
+    }
+
+    private void OnPrevMap()
+    {
+        int newIndex = _currentlySelectedLevelIndex;
+        newIndex--;
+        if (newIndex < 0)
+        {
+            newIndex = _levelsSettings.Count + newIndex;
+        }
+    
+        OnLevelSelected(newIndex);
     }
 
     private void OnLevelSelected(int i)
@@ -92,27 +118,26 @@ public class MainMenuViewController : MonoBehaviour
         CarSelectionObject.SetActive(false);
         CarSelection3dObject.SetActive(false);
         MapSelection.SetActive(true);
-
     }
 
-    // private void OnNextCar()
-    // {
-    //     int newIndex = _currentSelectedCarIndex + 1;
-    //     newIndex %= _selecteableCars.Count;
-    //     UpdateSelectedCarVisual(newIndex);
-    // }
+    private void OnNextCar()
+    {
+        int newIndex = _currentSelectedCarIndex + 1;
+        newIndex %= _selecteableCars.Count;
+        UpdateSelectedCarVisual(newIndex);
+    }
 
-    // private void OnPrevCar()
-    // {
-    //     int newIndex = _currentSelectedCarIndex;
-    //     newIndex--;
-    //     if (newIndex < 0)
-    //     {
-    //         newIndex = _selecteableCars.Count + newIndex;
-    //     }
-    //
-    //     UpdateSelectedCarVisual(newIndex);
-    // }
+    private void OnPrevCar()
+    {
+        int newIndex = _currentSelectedCarIndex;
+        newIndex--;
+        if (newIndex < 0)
+        {
+            newIndex = _selecteableCars.Count + newIndex;
+        }
+    
+        UpdateSelectedCarVisual(newIndex);
+    }
 
     public void UpdateSelectedCarVisual(int newIndex)
     {

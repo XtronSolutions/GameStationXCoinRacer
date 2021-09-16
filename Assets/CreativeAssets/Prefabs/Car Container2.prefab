@@ -14963,7 +14963,7 @@ Rigidbody:
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 2
+  m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 2
 --- !u!135 &7644685520503631954
@@ -25416,7 +25416,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   bumpMinForce: 2
   bumpMaxForce: 10
-  grindingSound: {fileID: 8300000, guid: 5027aaf6d82369340a9fb1bc8bf0d60c, type: 3}
+  grindingSound: {fileID: 8300000, guid: 79ee1538552cbe44e9e80401aefd6f5d, type: 3}
   onlyGrindOnStatic: 1
   grindMinForce: 1
   grindMaxForce: 2
