@@ -1375,7 +1375,6 @@ MonoBehaviour:
   _nextMapButton: {fileID: 1223356459}
   _prevMapButton: {fileID: 1000035188}
   _selecteableCars:
-  - {fileID: 40852001}
   - {fileID: 1854543677}
   _versionText: {fileID: 1086913394}
   _selectedCarName: {fileID: 1891370648}
