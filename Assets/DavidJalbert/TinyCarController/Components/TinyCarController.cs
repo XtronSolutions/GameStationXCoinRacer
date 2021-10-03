@@ -572,7 +572,7 @@ namespace DavidJalbert
             float collisionXZForce = getCollisionForceOnXZ(collision);
             if (verticalDot < 0.1f && collisionXZForce > 0.1f)
             {
-                hitSideMass = collision.rigidbody == null ? 0 : collision.rigidbody.mass;
+                hitSideMass = collision.rigidbody == null ? 1 : collision.rigidbody.mass;
                 hitSide = true;
                 bool isStaticCollider = collision.rigidbody == null || collision.rigidbody.isKinematic;
                 if (isStaticCollider) hitSideStayStatic = true;

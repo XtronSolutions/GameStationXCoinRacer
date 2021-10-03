@@ -62,7 +62,7 @@ namespace DavidJalbert
             sourceEngine.playOnAwake = false;
             sourceEngine.loop = true;
             sourceEngine.clip = engineSoundClip;
-            sourceEngine.volume = 0;
+            // sourceEngine.volume = 0;
 
             sourceEngine.Play();
 
@@ -71,7 +71,7 @@ namespace DavidJalbert
             sourceBrake.playOnAwake = false;
             sourceBrake.loop = true;
             sourceBrake.clip = brakeSoundClip;
-            sourceBrake.volume = 0;
+            // sourceBrake.volume = 0;
 
             sourceBrake.Play();
 
@@ -80,7 +80,7 @@ namespace DavidJalbert
             sourceGrinding.playOnAwake = false;
             sourceGrinding.loop = true;
             sourceGrinding.clip = grindingSound;
-            sourceGrinding.volume = 0;
+            // sourceGrinding.volume = 0;
 
             sourceGrinding.Play();
 
