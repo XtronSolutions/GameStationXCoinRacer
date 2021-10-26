@@ -14963,7 +14963,7 @@ Rigidbody:
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 2
   m_Constraints: 112
   m_CollisionDetection: 2
 --- !u!135 &7644685520503631954
@@ -25339,7 +25339,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   carController: {fileID: 7644685520503631955}
-  engineSoundClip: {fileID: 8300000, guid: 68c35dd3e75b57644a773a0aea2f1927, type: 3}
+  engineSoundClip: {fileID: 8300000, guid: f42ee6c61e2b5a049b588a485b2f267f, type: 3}
   enginePitchOverSpeed:
     serializedVersion: 2
     m_Curve:
