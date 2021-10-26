@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class RaceManager : MonoBehaviour
 {
@@ -12,13 +13,18 @@ public class RaceManager : MonoBehaviour
     [SerializeField] private int _requiredNumberOfLaps = 3;
     [SerializeField] private GameObject _pasueMenuObject = null;
     [SerializeField] private GameObject _raceOverMenuObject = null;
+    [SerializeField] private TextMeshProUGUI LapText;
     private int _currentWayPointIndex = 1;
     private int _lapsCounter;
-    
-    
+
+    public static RaceManager Instance;
+
+
     // Start is called before the first frame update
     void Start()
     {
+        Instance = this;
+        LapText.text = "Lap " + _lapsCounter.ToString() + "/" + _requiredNumberOfLaps.ToString();
         foreach (var wayPoint in _wayPoints)
         {
             wayPoint.WayPointDataObservable.Subscribe(OnWayPointData).AddTo(this);
@@ -45,6 +51,7 @@ public class RaceManager : MonoBehaviour
             if (_currentWayPointIndex == 1)
             {
                 _lapsCounter++;
+                LapText.text = "Lap " + _lapsCounter.ToString() + "/" + _requiredNumberOfLaps.ToString();
                 if (_lapsCounter == _requiredNumberOfLaps)
                 {
                     OnRaceDone();
@@ -59,8 +66,27 @@ public class RaceManager : MonoBehaviour
 
     private void OnRaceDone()
     {
-        _raceOverMenuObject.SetActive(true);
-        Time.timeScale = 0;
+        if (TimeHandler.Instance)
+            TimeHandler.Instance.timerIsRunning = false;
+
+
+        if(GamePlayUIHandler.Instance)
+        {
+            GamePlayUIHandler.Instance.ToggleInputScreen_InputFieldUI(true);
+            GamePlayUIHandler.Instance.SetWallet_InputFieldUI(FirebaseManager.Instance.PlayerData.WalletAddress);
+            GamePlayUIHandler.Instance.SetInputUsername_InputFieldUI(FirebaseManager.Instance.PlayerData.UserName);
+        }
+
+        Time.timeScale = 0.1f;
+    }
+    public void RaceEnded()
+    {
+        //_raceOverMenuObject.SetActive(true);
+
+        if(GamePlayUIHandler.Instance)
+        {
+            LeaderboardManager.Instance.EnableGameplayLeaderboard();
+        }
     }
 
     public void TogglePauseMenu()

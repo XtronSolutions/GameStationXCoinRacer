@@ -7,10 +7,18 @@ using UnityEngine;
 
 public class WayPoint : MonoBehaviour
 {
+
+    public bool IsStartWayPoint = false;
+    private bool GameStarted = false;
     private Subject<WayPointData> _wayPointDataSubject = new Subject<WayPointData>();
 
     public IObservable<WayPointData> WayPointDataObservable => _wayPointDataSubject;
- 
+
+
+    private void Start()
+    {
+        GameStarted = false;
+    }
     private void OnTriggerEnter(Collider other)
     {
         if(other.isTrigger) return;
@@ -19,6 +27,12 @@ public class WayPoint : MonoBehaviour
         if (carController != null)
         {
             _wayPointDataSubject.OnNext(new WayPointData(){ CarController = carController,Waypoint = this});
+
+            if(IsStartWayPoint & !GameStarted)
+            {
+                GameStarted = true;
+                TimeHandler.Instance.timerIsRunning = true;
+            }
         }
     }
 }

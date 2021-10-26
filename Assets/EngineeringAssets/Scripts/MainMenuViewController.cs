@@ -32,6 +32,10 @@ public class MainMenuViewController : MonoBehaviour
     [SerializeField] private Image _selectedMapImage = null;
     [SerializeField] private TextMeshProUGUI _levelNameText = null;
 
+
+    [SerializeField] private GameObject MessageUI;
+    [SerializeField] private TextMeshProUGUI ToastMsgText = null;
+
     private int _currentSelectedCarIndex = 0;
     private int _currentlySelectedLevelIndex = 0;
 
@@ -46,7 +50,7 @@ public class MainMenuViewController : MonoBehaviour
 
         _currentSelectedCarIndex = 0;
         UpdateSelectedCarVisual(_currentSelectedCarIndex);
-        _versionText.text = APP_VERSION;
+        //_versionText.text = APP_VERSION;
         
         _nextCarButton.onClick.AddListener(OnNextCar);
         _prevCarButton.onClick.AddListener(OnPrevCar);
@@ -98,10 +102,17 @@ public class MainMenuViewController : MonoBehaviour
     
     private void OnGoToCarSelection()
     {
-        GameModeSelectionObject.SetActive(false);
-        CarSelectionObject.SetActive(true);
-        CarSelection3dObject.SetActive(true);
-        MapSelection.SetActive(false);
+        if (FirebaseManager.Instance.WalletConnected)
+        {
+            GameModeSelectionObject.SetActive(false);
+            CarSelectionObject.SetActive(true);
+            CarSelection3dObject.SetActive(true);
+            MapSelection.SetActive(false);
+        }
+        else
+        {
+            ShowToast(3f, "Please connect your wallet first.");
+        }
     }
 
     private void OnGoBackToModeSelection()
@@ -151,5 +162,18 @@ public class MainMenuViewController : MonoBehaviour
     {
         SelectedCar = _selecteableCars[_currentSelectedCarIndex].carSettings;
         SceneManager.LoadScene(_levelsSettings[_currentlySelectedLevelIndex].SceneName);
+    }
+
+    private void ShowToast(float _time,string _msg)
+    {
+        MessageUI.SetActive(true);
+        ToastMsgText.text = _msg;
+        StartCoroutine(DisableToast(_time));
+    }
+
+    IEnumerator DisableToast(float _sec)
+    {
+        yield return new WaitForSeconds(_sec);
+        MessageUI.SetActive(false);
     }
 }
