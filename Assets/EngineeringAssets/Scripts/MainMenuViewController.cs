@@ -31,10 +31,14 @@ public class MainMenuViewController : MonoBehaviour
     [SerializeField] private List<LevelSettings> _levelsSettings = new List<LevelSettings>();
     [SerializeField] private Image _selectedMapImage = null;
     [SerializeField] private TextMeshProUGUI _levelNameText = null;
-
+    [SerializeField] private AudioClip _buttonPressClip = null;
+    [SerializeField] private AudioSource _audioSource = null;
 
     [SerializeField] private GameObject MessageUI;
     [SerializeField] private TextMeshProUGUI ToastMsgText = null;
+    
+ 
+
 
     private int _currentSelectedCarIndex = 0;
     private int _currentlySelectedLevelIndex = 0;
@@ -56,20 +60,6 @@ public class MainMenuViewController : MonoBehaviour
         _prevCarButton.onClick.AddListener(OnPrevCar);
         _nextMapButton.onClick.AddListener(OnNextMap);
         _prevMapButton.onClick.AddListener(OnPrevMap);
-
-        // for (int i = 0; i < _selectCarButtons.Count; i++)
-        // {
-        //     int index = i;
-        //     _selectCarButtons[i].image.sprite = _selecteableCars[i].carSettings.Icon;
-        //     _selectCarButtons[i].onClick.AsObservable().Subscribe(_ => UpdateSelectedCarVisual(index)).AddTo(this);
-        // }
-        //
-        // for (int i = 0; i < _levelsSettings.Count; i++)
-        // {
-        //     int index = i;
-        //     _SelectLevelButtons[i].image.sprite = _levelsSettings[i].Icon;
-        //     _SelectLevelButtons[i].onClick.AsObservable().Subscribe(_ => OnLevelSelected(index)).AddTo(this);
-        // }
 
         OnLevelSelected(0);
     }
@@ -175,5 +165,10 @@ public class MainMenuViewController : MonoBehaviour
     {
         yield return new WaitForSeconds(_sec);
         MessageUI.SetActive(false);
+    }
+    
+    public void PlayButtonDownAudioClip()
+    {
+        _audioSource.PlayOneShot(_buttonPressClip);
     }
 }
