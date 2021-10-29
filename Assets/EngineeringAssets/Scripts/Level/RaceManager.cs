@@ -14,13 +14,15 @@ public class RaceManager : MonoBehaviour
     [SerializeField] private GameObject _pasueMenuObject = null;
     [SerializeField] private GameObject _raceOverMenuObject = null;
     [SerializeField] private TextMeshProUGUI LapText;
+    
+    [SerializeField] private AudioClip _buttonPressClip = null;
+    [SerializeField] private AudioSource _audioSource = null;
+    
     private int _currentWayPointIndex = 1;
     private int _lapsCounter;
 
     public static RaceManager Instance;
-
-
-    // Start is called before the first frame update
+    
     void Start()
     {
         Instance = this;
@@ -112,4 +114,8 @@ public class RaceManager : MonoBehaviour
         return _wayPoints[_currentWayPointIndex].transform.position;
     }
    
+    public void PlayButtonDownAudioClip()
+    {
+        _audioSource.PlayOneShot(_buttonPressClip);
+    }
 }
