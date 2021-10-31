@@ -8,15 +8,29 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static Constants;
 
+[Serializable]
+public class TournamentUI
+{
+    public GameObject MainScreen;
+    public TextMeshProUGUI LowerHeaderText;
+    public TextMeshProUGUI TimerText;
+    public TextMeshProUGUI FotterText;
+    public TextMeshProUGUI DisclaimerText;
+    public GameObject LoaderObj;
+    public TextMeshProUGUI TournamentStartText;
+}
 public class MainMenuViewController : MonoBehaviour
 {
     public static CarSettings SelectedCar;
+
+    public static MainMenuViewController Instance;
 
     [SerializeField] private GameObject GameModeSelectionObject = null;
     [SerializeField] private GameObject CarSelectionObject = null;
     [SerializeField] private GameObject CarSelection3dObject = null;
     [SerializeField] private GameObject MapSelection = null;
     [SerializeField] private Button _singlePlayerButton = null;
+    [SerializeField] private Button _tournamentButton = null;
     [SerializeField] private Button _backToModeSelectionButton = null;
     [SerializeField] private Button _goToMapSelectionButton = null;
     [SerializeField] private Button _backToCarSelectionButton = null;
@@ -31,22 +45,30 @@ public class MainMenuViewController : MonoBehaviour
     [SerializeField] private List<LevelSettings> _levelsSettings = new List<LevelSettings>();
     [SerializeField] private Image _selectedMapImage = null;
     [SerializeField] private TextMeshProUGUI _levelNameText = null;
+    [SerializeField] private GameObject LoadingScreen = null;
     [SerializeField] private AudioClip _buttonPressClip = null;
     [SerializeField] private AudioSource _audioSource = null;
 
     [SerializeField] private GameObject MessageUI;
     [SerializeField] private TextMeshProUGUI ToastMsgText = null;
-    
- 
 
+    public TournamentUI UITournament;
 
     private int _currentSelectedCarIndex = 0;
     private int _currentlySelectedLevelIndex = 0;
 
     // Start is called before the first frame update
+
+    private void OnEnable()
+    {
+        Instance = this;
+    }
+
     void Start()
     {
+        _audioSource.GetComponent<AudioSource>();
         _singlePlayerButton.onClick.AddListener(OnGoToCarSelection);
+        _tournamentButton.onClick.AddListener(OnGoToCarSelectionTournament);
         _backToModeSelectionButton.onClick.AddListener(OnGoBackToModeSelection);
         _goToMapSelectionButton.onClick.AddListener(OnGoToMapSelection);
         _backToCarSelectionButton.onClick.AddListener(OnGoToCarSelection);
@@ -92,17 +114,80 @@ public class MainMenuViewController : MonoBehaviour
     
     private void OnGoToCarSelection()
     {
+       Constants.IsTournament = false;
+       Constants.IsPractice = true;
+       GameModeSelectionObject.SetActive(false);
+       CarSelectionObject.SetActive(true);
+       CarSelection3dObject.SetActive(true);
+       MapSelection.SetActive(false);
+    }
+
+    public void OnGoToCarSelectionTournament()
+    {
         if (FirebaseManager.Instance.WalletConnected)
         {
+            if (Constants.TournamentActive == true)
+            {
+                LoadingScreen.SetActive(true);
+                if (WalletManager.Instance)
+                {
+                    if (WalletManager.Instance.CheckBalanceTournament())
+                    {
+                        WalletManager.Instance.TransferToken(TournamentManager.Instance.DataTournament.TicketPrice);
+                    }
+                    else
+                    {
+                        LoadingScreen.SetActive(false);
+                        ShowToast(3f, "Insufficient $CRACE value.");
+                    }
+                }
+                else
+                {
+                    LoadingScreen.SetActive(false);
+                    Debug.LogError("WalletManager instance is null");
+                }
+            }else
+            {
+                LoadingScreen.SetActive(false);
+                ShowToast(3f, "No active tournament at the moment.");
+            }
+        }
+        else
+        {
+            LoadingScreen.SetActive(false);
+            ShowToast(3f, "Please connect your wallet first.");
+        }
+    }
+
+    public void StartTournament(bool _canstart=false)
+    {
+        if (_canstart)
+        {
+            ShowToast(2f, "Transaction was was successful");
+            LoadingScreen.SetActive(false);
+            Constants.IsTournament = true;
+            Constants.IsPractice = false;
             GameModeSelectionObject.SetActive(false);
             CarSelectionObject.SetActive(true);
             CarSelection3dObject.SetActive(true);
             MapSelection.SetActive(false);
-        }
-        else
+        }else
         {
-            ShowToast(3f, "Please connect your wallet first.");
+            LoadingScreen.SetActive(false);
+            ShowToast(3f, "Transaction was not successful, please try again.");
+            //Invoke("StartWithDelay", 4f);
         }
+    }
+
+    public void StartWithDelay()
+    {
+        LoadingScreen.SetActive(false);
+        Constants.IsTournament = true;
+        Constants.IsPractice = false;
+        GameModeSelectionObject.SetActive(false);
+        CarSelectionObject.SetActive(true);
+        CarSelection3dObject.SetActive(true);
+        MapSelection.SetActive(false);
     }
 
     private void OnGoBackToModeSelection()
@@ -166,7 +251,7 @@ public class MainMenuViewController : MonoBehaviour
         yield return new WaitForSeconds(_sec);
         MessageUI.SetActive(false);
     }
-    
+
     public void PlayButtonDownAudioClip()
     {
         _audioSource.PlayOneShot(_buttonPressClip);

@@ -12,17 +12,52 @@ public class RaceManager : MonoBehaviour
     [SerializeField] private List<WayPoint> _wayPoints = new List<WayPoint>();
     [SerializeField] private int _requiredNumberOfLaps = 3;
     [SerializeField] private GameObject _pasueMenuObject = null;
+    [SerializeField] private GameObject _pauseRestartButton = null;
     [SerializeField] private GameObject _raceOverMenuObject = null;
     [SerializeField] private TextMeshProUGUI LapText;
-    
     [SerializeField] private AudioClip _buttonPressClip = null;
     [SerializeField] private AudioSource _audioSource = null;
-    
+    [SerializeField] private TextMeshProUGUI GameStartTimer = null;
     private int _currentWayPointIndex = 1;
     private int _lapsCounter;
 
     public static RaceManager Instance;
-    
+    int RaceCounter = 3;
+
+    private void OnEnable()
+    {
+        RaceCounter = 3;
+        Constants.MoveCar = false;
+        GameStartTimer.text = RaceCounter.ToString();
+        StartCoroutine(StartTimerCountDown());
+    }
+
+
+    IEnumerator StartTimerCountDown()
+    {
+        Debug.Log(RaceCounter);
+        if(RaceCounter<-1)
+        {
+            GameStartTimer.text = "";
+            Constants.MoveCar = true ;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(1);
+        RaceCounter--;
+     
+        if (RaceCounter>0)
+        {
+            GameStartTimer.text = RaceCounter.ToString();
+            StartCoroutine(StartTimerCountDown());
+        }else
+        {
+            RaceCounter--;
+            GameStartTimer.text = "GO!";
+            StartCoroutine(StartTimerCountDown());
+        }
+    }
+    // Start is called before the first frame update
     void Start()
     {
         Instance = this;
@@ -72,14 +107,18 @@ public class RaceManager : MonoBehaviour
             TimeHandler.Instance.timerIsRunning = false;
 
 
-        if(GamePlayUIHandler.Instance)
+        if (GamePlayUIHandler.Instance && Constants.IsTournament)
         {
             GamePlayUIHandler.Instance.ToggleInputScreen_InputFieldUI(true);
             GamePlayUIHandler.Instance.SetWallet_InputFieldUI(FirebaseManager.Instance.PlayerData.WalletAddress);
             GamePlayUIHandler.Instance.SetInputUsername_InputFieldUI(FirebaseManager.Instance.PlayerData.UserName);
         }
+        else if (GamePlayUIHandler.Instance && Constants.IsPractice)
+        {
+            _raceOverMenuObject.SetActive(true);
+        }
 
-        Time.timeScale = 0.1f;
+            Time.timeScale = 0.1f;
     }
     public void RaceEnded()
     {
@@ -94,6 +133,11 @@ public class RaceManager : MonoBehaviour
     public void TogglePauseMenu()
     {
         _pasueMenuObject.SetActive(!_pasueMenuObject.activeSelf);
+        _pauseRestartButton.SetActive(false);
+
+        if (Constants.IsPractice)
+            _pauseRestartButton.SetActive(true);
+
         Time.timeScale = _pasueMenuObject.activeSelf ? 0 : 1;
     }
 
@@ -113,9 +157,10 @@ public class RaceManager : MonoBehaviour
     {
         return _wayPoints[_currentWayPointIndex].transform.position;
     }
-   
+
     public void PlayButtonDownAudioClip()
     {
         _audioSource.PlayOneShot(_buttonPressClip);
     }
+
 }

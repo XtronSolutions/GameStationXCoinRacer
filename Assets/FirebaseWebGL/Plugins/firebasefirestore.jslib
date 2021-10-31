@@ -320,7 +320,7 @@ mergeInto(LibraryManager.library, {
 
         try {
 			
-			firebase.firestore().collection(parsedPath).orderBy(parsedFieldName,parsedType).limit(10).where("TimeSeconds","!=",0).onSnapshot({
+			firebase.firestore().collection(parsedPath).orderBy(parsedFieldName,parsedType).limit(20).where("TimeSeconds","!=",0).onSnapshot({
                 }, function(querySnapshot) {
                     var docs = [];
                     querySnapshot.forEach(function(doc) {
@@ -331,6 +331,31 @@ mergeInto(LibraryManager.library, {
                 }, function(error) {
                     unityInstance.Module.SendMessage(parsedObjectName, parsedFallback, JSON.stringify(error, Object.getOwnPropertyNames(error)));
                 });
+        } catch (error) {
+            unityInstance.Module.SendMessage(parsedObjectName, parsedFallback, JSON.stringify(error, Object.getOwnPropertyNames(error)));
+        }
+    },
+	
+	GetTournamentData: function (collectionPath, DocPath,objectName, callback, fallback) {
+        var parsedPath = Pointer_stringify(collectionPath);
+        var parsedDocPath = Pointer_stringify(DocPath);
+		var parsedObjectName = Pointer_stringify(objectName);
+        var parsedCallback = Pointer_stringify(callback);
+        var parsedFallback = Pointer_stringify(fallback);
+
+        try {
+			var callonce=false;
+			var db = firebase.firestore();
+			var ref = db.collection(parsedPath).doc(parsedDocPath);
+			ref.update({ timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+			ref.onSnapshot({},function(_snapshot) {
+				if(callonce==true)
+				{
+				    unityInstance.Module.SendMessage(parsedObjectName, parsedCallback, JSON.stringify(_snapshot.data()));
+				}
+				
+				callonce=true;
+			});							
         } catch (error) {
             unityInstance.Module.SendMessage(parsedObjectName, parsedFallback, JSON.stringify(error, Object.getOwnPropertyNames(error)));
         }

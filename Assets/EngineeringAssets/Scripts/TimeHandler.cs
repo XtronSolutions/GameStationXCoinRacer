@@ -24,23 +24,24 @@ public class TimeHandler : MonoBehaviour
     float timeSpanConversionHours;//var to hold hours after converstion from seconds
     float timeSpanConversiondMinutes;//var to hold minutes after converstion from seconds
     float timeSpanConversionSeconds;//var to hold seconds after converstion from float seconds
+    float timeSpanConversionMiliSeconds;//var to hold mili seconds after converstion from float seconds
 
     string textfieldHours;//string store converstion of hours into string for display
     string textfieldMinutes;//string store converstion of minutes into string for display
     string textfieldSeconds;//string store converstion of seconds into string for display
+    string textfieldMiliSeconds;//string store converstion of mili seconds into string for display
 
     string MainTime;//string to store complete time
 
     void Start()
     {
         Instance = this;
-        // Starts the timer automatically
-        //timerIsRunning = true;
+        timerIsRunning = true;
     }
 
     void Update()
     {
-        if (timerIsRunning)
+        if (timerIsRunning && Constants.MoveCar)
         {
             TotalSeconds += Time.deltaTime;
             ConvertTime(TotalSeconds);
@@ -54,11 +55,13 @@ public class TimeHandler : MonoBehaviour
         timeSpanConversionHours = TimeSpan.FromSeconds(_sec).Hours;
         timeSpanConversiondMinutes = TimeSpan.FromSeconds(_sec).Minutes;
         timeSpanConversionSeconds = TimeSpan.FromSeconds(_sec).Seconds;
+        timeSpanConversionMiliSeconds = TimeSpan.FromSeconds(_sec).Milliseconds/10;
 
         //Convert TimeSpan variables into strings for textfield display
         textfieldHours = timeSpanConversionHours.ToString();
         textfieldMinutes = timeSpanConversiondMinutes.ToString();
         textfieldSeconds = timeSpanConversionSeconds.ToString();
+        textfieldMiliSeconds = timeSpanConversionMiliSeconds.ToString();
     }
 
     public void DisplayScreenTime()
@@ -66,28 +69,23 @@ public class TimeHandler : MonoBehaviour
         //Display the time given the number of digits.
         if (textfieldMinutes.Length == 2 && textfieldSeconds.Length == 2)
         { 
-            MainTime = textfieldHours + ":" + textfieldMinutes + ":" + textfieldSeconds; 
-            //Debug.Log("Time Elaped: " + MainTime); 
+            MainTime = textfieldHours + ":" + textfieldMinutes + ":" + textfieldSeconds+":"+textfieldMiliSeconds; 
         }
         else if (textfieldMinutes.Length == 2 && textfieldSeconds.Length == 1)
         { 
-            MainTime = textfieldHours + ":" + textfieldMinutes + ":0" + textfieldSeconds;
-            //Debug.Log("Time Elaped: " + MainTime); UITime.TimeText.text = MainTime;
+            MainTime = textfieldHours + ":" + textfieldMinutes + ":0" + textfieldSeconds + ":" + textfieldMiliSeconds;
         }
         else if (textfieldMinutes.Length == 1 && textfieldSeconds.Length == 1)
         { 
-            MainTime = textfieldHours + ":0" + textfieldMinutes + ":0" + textfieldSeconds; 
-            //Debug.Log("Time Elaped: " + MainTime); UITime.TimeText.text = MainTime; 
+            MainTime = textfieldHours + ":0" + textfieldMinutes + ":0" + textfieldSeconds + ":" + textfieldMiliSeconds; 
         }
         else if (textfieldMinutes.Length == 1 && textfieldSeconds.Length == 2)
         { 
-            MainTime = textfieldHours + ":0" + textfieldMinutes + ":" + textfieldSeconds; 
-            //Debug.Log("Time Elaped: " + MainTime); UITime.TimeText.text = MainTime; 
+            MainTime = textfieldHours + ":0" + textfieldMinutes + ":" + textfieldSeconds + ":" + textfieldMiliSeconds; 
         }
         else
         { 
-            MainTime = textfieldHours + ":" + textfieldMinutes + ":" + textfieldSeconds; 
-            //Debug.Log("Time Elaped: " + MainTime); UITime.TimeText.text = MainTime; 
+            MainTime = textfieldHours + ":" + textfieldMinutes + ":" + textfieldSeconds + ":" + textfieldMiliSeconds; 
         }
 
         UITime.TimeText.text = MainTime;

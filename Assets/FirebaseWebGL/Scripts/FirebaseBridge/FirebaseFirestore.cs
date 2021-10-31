@@ -197,5 +197,16 @@ namespace FirebaseWebGL.Scripts.FirebaseBridge
         /// <param name="fallback"> Name of the method to call when the operation was unsuccessful. Method must have signature: void Method(string output). Will return a serialized FirebaseError object </param>
         [DllImport("__Internal")]
         public static extern void QueryDB(string collectionPath,string fieldName,string type, string objectName,string callback, string fallback);
+
+        /// <summary>
+        /// Get tournament Data
+        /// </summary>
+        /// <param name="collectionPath"> Collection path </param>
+        /// <param name="DocPath"> Name of the gameobject to call the callback/fallback of </param>
+        /// <param name="objectName"> Name of the gameobject to call the callback/fallback of </param>
+        /// <param name="callback"> Name of the method to call when the operation was successful. Method must have signature: void Method(string output) </param>
+        /// <param name="fallback"> Name of the method to call when the operation was unsuccessful. Method must have signature: void Method(string output). Will return a serialized FirebaseError object </param>
+        [DllImport("__Internal")]
+        public static extern void GetTournamentData(string collectionPath,string DocPath,string objectName, string callback, string fallback);
     }
 }

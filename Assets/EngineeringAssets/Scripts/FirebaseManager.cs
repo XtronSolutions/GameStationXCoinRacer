@@ -146,4 +146,6 @@ public class FirebaseManager : MonoBehaviour
     {
         Debug.LogError(error);
     }
+
+
 }

@@ -51,6 +51,9 @@ namespace DavidJalbert
 
         void Update()
         {
+            if (!Constants.MoveCar)
+                return;
+
             float motorDelta = getInput(forwardInput) - getInput(reverseInput);
             float steeringDelta = getInput(steerRightInput) - getInput(steerLeftInput);
             // if (getInput(boostInput) == 1 && boostTimer == 0)

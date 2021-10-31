@@ -1,13 +1,13 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!21 &-987019306340266323
+--- !u!21 &-4218682224932757248
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: JosefinSans-Bold SDF Material
+  m_Name: JosefinSans-Bold SDF_new Material
   m_Shader: {fileID: 4800000, guid: 68e6db2ebdc24f95958faec2be5558d6, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -32,7 +32,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2977951439663545427}
+        m_Texture: {fileID: 1027883074468648851}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OutlineTex:
@@ -65,12 +65,12 @@ Material:
     - _OutlineSoftness: 0
     - _OutlineUVSpeedX: 0
     - _OutlineUVSpeedY: 0
-    - _OutlineWidth: 0
+    - _OutlineWidth: 0.01
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
     - _ScaleRatioA: 0.8333333
     - _ScaleRatioB: 0.6770833
-    - _ScaleRatioC: 0.6770833
+    - _ScaleRatioC: 0.5022873
     - _ScaleX: 1
     - _ScaleY: 1
     - _ShaderFlags: 0
@@ -79,14 +79,14 @@ Material:
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
-    - _StencilReadMask: 1
-    - _StencilWriteMask: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
     - _TextureHeight: 512
     - _TextureWidth: 512
     - _UnderlayDilate: 0
-    - _UnderlayOffsetX: 0
-    - _UnderlayOffsetY: 0
-    - _UnderlaySoftness: 0
+    - _UnderlayOffsetX: 1
+    - _UnderlayOffsetY: -1
+    - _UnderlaySoftness: 0.348
     - _VertexOffsetX: 0
     - _VertexOffsetY: 0
     - _WeightBold: 0.75
@@ -113,11 +113,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: JosefinSans-Bold SDF
+  m_Name: JosefinSans-Bold SDF_new
   m_EditorClassIdentifier: 
-  hashCode: 618507876
-  material: {fileID: -987019306340266323}
-  materialHashCode: -120527548
+  hashCode: -1627304185
+  material: {fileID: -4218682224932757248}
+  materialHashCode: 1612842823
   m_Version: 1.1.0
   m_SourceFontFileGUID: 756770dc7d8318445a3d49b616443c81
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: 756770dc7d8318445a3d49b616443c81, type: 3}
@@ -1893,7 +1893,7 @@ MonoBehaviour:
     m_GlyphIndex: 443
     m_Scale: 1
   m_AtlasTextures:
-  - {fileID: 2977951439663545427}
+  - {fileID: 1027883074468648851}
   m_AtlasTextureIndex: 0
   m_IsMultiAtlasTexturesEnabled: 0
   m_ClearDynamicDataOnBuild: 0
@@ -2642,13 +2642,13 @@ MonoBehaviour:
   boldSpacing: 7
   italicStyle: 35
   tabSize: 10
---- !u!28 &2977951439663545427
+--- !u!28 &1027883074468648851
 Texture2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: JosefinSans-Bold SDF Atlas
+  m_Name: JosefinSans-Bold SDF_new Atlas
   m_ImageContentsHash:
     serializedVersion: 2
     Hash: 00000000000000000000000000000000

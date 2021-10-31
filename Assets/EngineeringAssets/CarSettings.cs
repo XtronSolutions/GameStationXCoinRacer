@@ -7,7 +7,7 @@ public class CarSettings : ScriptableObject
 {
     public enum CarType
     {
-        Car1,Car2
+        Car1,Car2,Car3
     }
     
     public CarType carType;

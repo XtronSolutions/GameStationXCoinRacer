@@ -14,10 +14,12 @@ public class LeaderboardUI : MonoBehaviour
     float timeSpanConversionHours;//var to hold hours after converstion from seconds
     float timeSpanConversiondMinutes;//var to hold minutes after converstion from seconds
     float timeSpanConversionSeconds;//var to hold seconds after converstion from float seconds
+    float timeSpanConversionMiliSeconds;//var to hold mili seconds after converstion from float seconds
 
     string textfieldHours;//string store converstion of hours into string for display
     string textfieldMinutes;//string store converstion of minutes into string for display
     string textfieldSeconds;//string store converstion of seconds into string for display
+    string textfieldMiliSeconds;//string store converstion of mili seconds into string for display
 
     string MainTime;
     public void SetPrefabData(string _pos,string _name,string _wallet,float _time)
@@ -46,11 +48,13 @@ public class LeaderboardUI : MonoBehaviour
         timeSpanConversionHours = TimeSpan.FromSeconds(_sec).Hours;
         timeSpanConversiondMinutes = TimeSpan.FromSeconds(_sec).Minutes;
         timeSpanConversionSeconds = TimeSpan.FromSeconds(_sec).Seconds;
+        timeSpanConversionMiliSeconds = TimeSpan.FromSeconds(_sec).Milliseconds / 10;
 
         //Convert TimeSpan variables into strings for textfield display
         textfieldHours = timeSpanConversionHours.ToString();
         textfieldMinutes = timeSpanConversiondMinutes.ToString();
         textfieldSeconds = timeSpanConversionSeconds.ToString();
+        textfieldMiliSeconds = timeSpanConversionMiliSeconds.ToString();
 
         LeaderboardTime();
     }
@@ -59,15 +63,15 @@ public class LeaderboardUI : MonoBehaviour
     {
         //Display the time given the number of digits.
         if (textfieldMinutes.Length == 2 && textfieldSeconds.Length == 2)
-            MainTime = textfieldHours + ":" + textfieldMinutes + ":" + textfieldSeconds;
+            MainTime = textfieldHours + ":" + textfieldMinutes + ":" + textfieldSeconds + ":" + textfieldMiliSeconds;
         else if (textfieldMinutes.Length == 2 && textfieldSeconds.Length == 1)
-            MainTime = textfieldHours + ":" + textfieldMinutes + ":0" + textfieldSeconds;
+            MainTime = textfieldHours + ":" + textfieldMinutes + ":0" + textfieldSeconds + ":" + textfieldMiliSeconds;
         else if (textfieldMinutes.Length == 1 && textfieldSeconds.Length == 1)
-            MainTime = textfieldHours + ":0" + textfieldMinutes + ":0" + textfieldSeconds;
+            MainTime = textfieldHours + ":0" + textfieldMinutes + ":0" + textfieldSeconds + ":" + textfieldMiliSeconds;
         else if (textfieldMinutes.Length == 1 && textfieldSeconds.Length == 2)
-            MainTime = textfieldHours + ":0" + textfieldMinutes + ":" + textfieldSeconds;
+            MainTime = textfieldHours + ":0" + textfieldMinutes + ":" + textfieldSeconds + ":" + textfieldMiliSeconds;
         else
-            MainTime = textfieldHours + ":" + textfieldMinutes + ":" + textfieldSeconds;
+            MainTime = textfieldHours + ":" + textfieldMinutes + ":" + textfieldSeconds + ":" + textfieldMiliSeconds;
 
         TimeText.text = MainTime;
     }
