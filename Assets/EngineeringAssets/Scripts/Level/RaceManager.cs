@@ -32,7 +32,6 @@ public class RaceManager : MonoBehaviour
         StartCoroutine(StartTimerCountDown());
     }
 
-
     IEnumerator StartTimerCountDown()
     {
         Debug.Log(RaceCounter);
@@ -103,8 +102,16 @@ public class RaceManager : MonoBehaviour
 
     private void OnRaceDone()
     {
+        Constants.GameSeconds = 0;
+
         if (TimeHandler.Instance)
+        {
+            Constants.GameSeconds = TimeHandler.Instance.TotalSeconds;
             TimeHandler.Instance.timerIsRunning = false;
+        }else
+        {
+            Debug.LogError("TimeHandler instance is null");
+        }
 
 
         if (GamePlayUIHandler.Instance && Constants.IsTournament)

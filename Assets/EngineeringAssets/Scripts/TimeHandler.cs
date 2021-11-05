@@ -17,7 +17,7 @@ public class TimeHandler : MonoBehaviour
     public static TimeHandler Instance; //creating static instance of the TimeHandler class
 
     [HideInInspector]
-    public float TotalSeconds = 0;//float to store total seconds elapsed
+    public double TotalSeconds = 0;//float to store total seconds elapsed
     [HideInInspector]
     public bool timerIsRunning = false;//bool to handle timer (running/stopping)
 
@@ -49,7 +49,7 @@ public class TimeHandler : MonoBehaviour
         }
     }
 
-    public void ConvertTime(float _sec)
+    public void ConvertTime(double _sec)
     {
         //Store TimeSpan into variable.
         timeSpanConversionHours = TimeSpan.FromSeconds(_sec).Hours;

@@ -81,6 +81,7 @@ mergeInto(LibraryManager.library, {
         var parsedOnUserSignedIn = Pointer_stringify(onUserSignedIn);
         var parsedOnUserSignedOut = Pointer_stringify(onUserSignedOut);
 
+		//AuthenticateAnonymous(parsedObjectName,parsedOnUserSignedIn,parsedOnUserSignedOut);
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
                 unityInstance.Module.SendMessage(parsedObjectName, parsedOnUserSignedIn, JSON.stringify(user));
@@ -88,6 +89,25 @@ mergeInto(LibraryManager.library, {
                 unityInstance.Module.SendMessage(parsedObjectName, parsedOnUserSignedOut, "User signed out");
             }
         });
+    },
+	
+	AuthenticateAnonymous: function (objectName, callback, fallback) {
+        var parsedObjectName = Pointer_stringify(objectName);
+        var parsedCallback = Pointer_stringify(callback);
+        var parsedFallback = Pointer_stringify(fallback);
+		
+		try {
+            firebase.auth().signInAnonymously().then(function () {
+				console.log("Anonymous login was successful");
+                //unityInstance.Module.SendMessage(parsedObjectName, parsedCallback, "Anonymous Auth done");
+            }).catch(function (error) {
+                console.log(JSON.stringify(error, Object.getOwnPropertyNames(error)));
+				//unityInstance.Module.SendMessage(parsedObjectName, parsedFallback, JSON.stringify(error, Object.getOwnPropertyNames(error)));
+            });
 
-    }
+        } catch (error) {
+                console.log(JSON.stringify(error, Object.getOwnPropertyNames(error)));
+				//unityInstance.Module.SendMessage(parsedObjectName, parsedFallback, JSON.stringify(error, Object.getOwnPropertyNames(error)));
+        }
+    },
 });

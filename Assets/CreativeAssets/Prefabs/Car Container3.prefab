@@ -15325,7 +15325,7 @@ MonoBehaviour:
   gravityMode: 1
   gravityVelocity: 80
   maxGravity: 70
-  maxSlopeAngle: 80
+  maxSlopeAngle: 85
   sideFriction: 0.3
   collidableLayers:
     serializedVersion: 2

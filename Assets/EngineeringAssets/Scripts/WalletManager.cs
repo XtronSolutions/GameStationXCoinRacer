@@ -94,7 +94,7 @@ public class WalletManager : MonoBehaviour
     {
         DecimalValue = (BigInteger)Math.Pow(10, (double)decimals);
         ActualBalance = MainbalanceOf / DecimalValue;
-        Debug.Log("Balance after decimal calculation: " + ActualBalance);
+        //Debug.Log("Balance after decimal calculation: " + ActualBalance);
         MainUI.CoinText.text = ActualBalance.ToString();
     }
     /// <summary>
@@ -130,10 +130,13 @@ public class WalletManager : MonoBehaviour
 #endif
 
         FirebaseManager.Instance.WalletConnected = true;
+
+        FirebaseManager.Instance.DocFetched = false;
+        FirebaseManager.Instance.ResultFetched = true;
         FirebaseManager.Instance.StartCoroutine(FirebaseManager.Instance.CheckCreateUserDB(PlayerPrefs.GetString("Account"), ""));
 
-        Debug.Log("OnConnected Called");
-        Debug.Log(PlayerPrefs.GetString("Account"));
+        Debug.Log("wallet connected");
+        //Debug.Log(PlayerPrefs.GetString("Account"));
 
         // reset login message
         SetConnectAccount("");
@@ -171,7 +174,7 @@ public class WalletManager : MonoBehaviour
     async public void BEPBalanceOf()
     {
         MainbalanceOf = await ERC20.BalanceOf(chain, network, contract, account);
-        print("Balance: " + MainbalanceOf);
+        //print("Balance: " + MainbalanceOf);
         DisplayBalance();
     }
 
@@ -181,7 +184,7 @@ public class WalletManager : MonoBehaviour
     async public void BEPName()
     {
         nameContract = await ERC20.Name(chain, network, contract);
-        print("name: " + nameContract);
+        //print("name: " + nameContract);
     }
 
     /// <summary>
@@ -190,7 +193,7 @@ public class WalletManager : MonoBehaviour
     async public void BEPSymbol()
     {
         symbol = await ERC20.Symbol(chain, network, contract);
-        print("Symbol: " + symbol);
+        //print("Symbol: " + symbol);
     }
 
     /// <summary>
@@ -199,7 +202,7 @@ public class WalletManager : MonoBehaviour
     async public void BEPDecimals()
     {
         decimals = await ERC20.Decimals(chain, network, contract);
-        print("Decimals: " + decimals);
+       // print("Decimals: " + decimals);
     }
 
     /// <summary>
@@ -208,7 +211,7 @@ public class WalletManager : MonoBehaviour
     async public void BEPTotalSupply()
     {
         totalSupply = await ERC20.TotalSupply(chain, network, contract);
-        print("Total Supply: " + totalSupply);
+        //print("Total Supply: " + totalSupply);
     }
 
     public void OnSkip()

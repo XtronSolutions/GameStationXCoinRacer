@@ -6,6 +6,7 @@ using FirebaseWebGL.Scripts.FirebaseBridge;
 using FirebaseWebGL.Scripts.Objects;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Text;
 public class UserData
 {
     public string UserName { get; set; }
@@ -13,8 +14,12 @@ public class UserData
     public double TimeSeconds { get; set; }
 }
 
+
 public class FirebaseManager : MonoBehaviour
 {
+    private int key=129;
+
+    private string UID = "";
     public UserData PlayerData;
     public UserData[] PlayerDataArray;
     //private DependencyStatus dependencyStatus;
@@ -25,8 +30,10 @@ public class FirebaseManager : MonoBehaviour
     public bool WalletConnected = false;
 
     string DocPath = "users";
-    bool DocFetched = false;
-    bool ResultFetched = false;
+    [HideInInspector]
+    public bool DocFetched = false;
+    [HideInInspector]
+    public bool ResultFetched = false;
     void Start()
     {
         if (!Instance)
@@ -34,6 +41,43 @@ public class FirebaseManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(this.gameObject);
         }
+
+        //AuthenticateFirebase();
+        OnAuthChanged();
+    }
+
+    public void AuthenticateFirebase()
+    {
+        FirebaseAuth.AuthenticateAnonymous(gameObject.name, "OnAuthSuccess", "OnAuthError");
+    }
+
+    public void OnAuthSuccess(string info)
+    {
+        Debug.Log(info);        
+    }
+
+
+    public void OnAuthError(string error)
+    {
+        Debug.LogError(error);
+    }
+
+    public void OnAuthChanged()
+    {
+        FirebaseAuth.OnAuthStateChanged(gameObject.name, "OnAuthChangedSuccess", "OnAuthChangedError");
+    }
+
+    public void OnAuthChangedSuccess(string user)
+    {
+        var parsedUser = StringSerializationAPI.Deserialize(typeof(FirebaseUser), user) as FirebaseUser;
+        UID = parsedUser.uid;
+        //DisplayData($"Email: {parsedUser.email}, UserId: {parsedUser.uid}, EmailVerified: {parsedUser.isEmailVerified}");
+    }
+
+    public void OnAuthChangedError(string info)
+    {
+        UID = "";
+        Debug.LogError(info);
     }
 
     public void AddFireStoreData(UserData _data)
@@ -44,7 +88,7 @@ public class FirebaseManager : MonoBehaviour
     public void OnAddData(string info)
     {
         Debug.Log("Data successfully added");
-        Debug.Log(info);
+        //Debug.Log(info);
     }
 
     public void OnAddDataError(string error)
@@ -61,21 +105,21 @@ public class FirebaseManager : MonoBehaviour
 
     public void OnDocGet(string info)
     {
-        Debug.Log("information :"+ info);
+        Debug.Log("doc was fetched successfully");
 
         if (info == null || info=="null")
         {
             DocFetched = false;
             ResultFetched = true;
-            Debug.Log("info is null");
+            Debug.LogError("info is null for OnDocGet");
         }
         else
         {
             PlayerData = JsonConvert.DeserializeObject<UserData>(info);
             DocFetched = true;
             ResultFetched = true;
-            Debug.Log(info);
-            Debug.Log("info is not null");
+           // Debug.Log(info);
+            //Debug.Log("info is not null");
         }
     }
 
@@ -97,15 +141,24 @@ public class FirebaseManager : MonoBehaviour
             Debug.Log(_walletID);
             Debug.Log(PlayerData.WalletAddress);
             Debug.Log(PlayerData.UserName);
+            //Debug.Log(EncryptDecrypt(PlayerData.TimeSeconds));
             Debug.Log(PlayerData.TimeSeconds);
-        }else
+        }
+        else
         {
             Debug.Log("user does not exists, creating new entry in database!");
             PlayerData = new UserData();
             PlayerData.WalletAddress = _walletID;
             PlayerData.UserName = _username;
+            //PlayerData.TimeSeconds = EncryptDecrypt("0");
             PlayerData.TimeSeconds = 0;
             AddFireStoreData(PlayerData);
+        }
+
+        if(Constants.PushingTime)
+        {
+            Constants.PushingTime = false;
+            GamePlayUIHandler.Instance.SubmitTime();
         }
     }
 
@@ -127,7 +180,6 @@ public class FirebaseManager : MonoBehaviour
         Debug.LogError(error);
     }
 
-
     public void QueryDB(string _field,string _type)
     {
         FirebaseFirestore.QueryDB(DocPath,_field, _type, gameObject.name, "OnQueryUpdate", "OnQueryUpdateError");
@@ -135,10 +187,10 @@ public class FirebaseManager : MonoBehaviour
 
     public void OnQueryUpdate(string info)
     {
-        Debug.Log("Query done");
-        Debug.Log(info);
+        Debug.Log("leaderboard query completed");
+        //Debug.Log(info);
         PlayerDataArray = JsonConvert.DeserializeObject<UserData[]>(info);
-        System.Array.Reverse(PlayerDataArray);
+        //System.Array.Reverse(PlayerDataArray);
         LeaderboardManager.Instance.PopulateLeaderboardData(PlayerDataArray);
     }
 
@@ -147,5 +199,17 @@ public class FirebaseManager : MonoBehaviour
         Debug.LogError(error);
     }
 
-
+    public string EncryptDecrypt(string textToEncrypt)
+    {
+        StringBuilder inSb = new StringBuilder(textToEncrypt);
+        StringBuilder outSb = new StringBuilder(textToEncrypt.Length);
+        char c;
+        for (int i = 0; i < textToEncrypt.Length; i++)
+        {
+            c = inSb[i];
+            c = (char)(c ^ key);
+            outSb.Append(c);
+        }
+        return outSb.ToString();
+    }
 }

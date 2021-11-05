@@ -7,12 +7,11 @@ public class CarSettings : ScriptableObject
 {
     public enum CarType
     {
-        Car1,Car2,Car3
+        Car1,Car2,Car3,Car4
     }
     
     public CarType carType;
     public string Name;
     public GameObject CarPrefab;
     public Sprite Icon;
-
 }

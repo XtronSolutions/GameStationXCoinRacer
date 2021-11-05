@@ -320,7 +320,7 @@ mergeInto(LibraryManager.library, {
 
         try {
 			
-			firebase.firestore().collection(parsedPath).orderBy(parsedFieldName,parsedType).limit(20).where("TimeSeconds","!=",0).onSnapshot({
+			var unsub=firebase.firestore().collection(parsedPath).orderBy(parsedFieldName).limit(20).where("TimeSeconds","!=",0).onSnapshot({
                 }, function(querySnapshot) {
                     var docs = [];
                     querySnapshot.forEach(function(doc) {
@@ -328,11 +328,14 @@ mergeInto(LibraryManager.library, {
                     });
 
                     unityInstance.Module.SendMessage(parsedObjectName, parsedCallback, JSON.stringify(docs));
+					unsub();
                 }, function(error) {
                     unityInstance.Module.SendMessage(parsedObjectName, parsedFallback, JSON.stringify(error, Object.getOwnPropertyNames(error)));
+					unsub();
                 });
         } catch (error) {
             unityInstance.Module.SendMessage(parsedObjectName, parsedFallback, JSON.stringify(error, Object.getOwnPropertyNames(error)));
+			unsub();
         }
     },
 	
@@ -348,16 +351,18 @@ mergeInto(LibraryManager.library, {
 			var db = firebase.firestore();
 			var ref = db.collection(parsedPath).doc(parsedDocPath);
 			ref.update({ timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-			ref.onSnapshot({},function(_snapshot) {
+			var unsub2=ref.onSnapshot({},function(_snapshot) {
 				if(callonce==true)
 				{
 				    unityInstance.Module.SendMessage(parsedObjectName, parsedCallback, JSON.stringify(_snapshot.data()));
+					unsub2();
 				}
 				
 				callonce=true;
 			});							
         } catch (error) {
             unityInstance.Module.SendMessage(parsedObjectName, parsedFallback, JSON.stringify(error, Object.getOwnPropertyNames(error)));
+			unsub2();
         }
     },
 

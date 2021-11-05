@@ -69,16 +69,40 @@ public class GamePlayUIHandler : MonoBehaviour
         {
             if (FirebaseManager.Instance)
             {
-                FirebaseManager.Instance.PlayerData.UserName = _username;
-                FirebaseManager.Instance.PlayerData.TimeSeconds = TimeHandler.Instance.TotalSeconds;
-                FirebaseManager.Instance.UpdatedFireStoreData(FirebaseManager.Instance.PlayerData);
-
+                FirebaseManager.Instance.DocFetched = false;
+                FirebaseManager.Instance.ResultFetched = true;
+                Constants.PushingTime = true;
+                FirebaseManager.Instance.StartCoroutine(FirebaseManager.Instance.CheckCreateUserDB(PlayerPrefs.GetString("Account"), ""));
             }
 
             ToggleInputScreen_InputFieldUI(false);
-           
         }
+    }
 
+    public void SubmitTime()
+    {
+        if (!FirebaseManager.Instance)
+            Debug.LogError("Firebase instance is null");
+
+        FirebaseManager.Instance.PlayerData.UserName = _username;
+
+        Debug.Log("Previous Time: " + FirebaseManager.Instance.PlayerData.TimeSeconds.ToString() + " " + "Current Time" + Constants.GameSeconds.ToString()) ;
+
+        if (FirebaseManager.Instance.PlayerData.TimeSeconds == 0)
+        {
+            FirebaseManager.Instance.PlayerData.TimeSeconds = Constants.GameSeconds;
+            FirebaseManager.Instance.UpdatedFireStoreData(FirebaseManager.Instance.PlayerData);
+        }
+        else if (Constants.GameSeconds < FirebaseManager.Instance.PlayerData.TimeSeconds)
+        {
+            FirebaseManager.Instance.PlayerData.TimeSeconds = Constants.GameSeconds;
+            FirebaseManager.Instance.UpdatedFireStoreData(FirebaseManager.Instance.PlayerData);
+        }
+        else
+        {
+            RaceManager.Instance.RaceEnded();
+            Debug.Log("no pushing time, as current is greater than previous");
+        }
     }
     #endregion
 

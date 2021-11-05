@@ -11,4 +11,6 @@ public static class Constants
     public static bool TournamentActive = false;
     public static bool WalletConnected = false;
     public static bool MoveCar = false;
+    public static bool PushingTime = false;
+    public static double GameSeconds = 0;
 }
