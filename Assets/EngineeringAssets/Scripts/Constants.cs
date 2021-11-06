@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class Constants
 {
-    public static string APP_VERSION = "Alpha 1.5";
+    public static string APP_VERSION = "1.0";
     public static string MAIN_MENU_SCENE_NAME = "MainMenu";
     public static bool IsPractice = false;
     public static bool IsTournament = false;
@@ -13,4 +13,9 @@ public static class Constants
     public static bool MoveCar = false;
     public static bool PushingTime = false;
     public static double GameSeconds = 0;
+    public static int Tries12Fees = 1;//100
+    public static int FreeGamerPirce = 1;//100
+    public static bool BuyingTries = false;
+    public static int NumberTriesToBuy = 12;
+
 }

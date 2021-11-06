@@ -47,13 +47,25 @@ public class WalletManager : MonoBehaviour
     string symbol;//string to store symbol of token in wallet
     BigInteger totalSupply;//Biginteger to store totalSupply of tokens
     string nameContract;//string to store name of the contract (BEP20)
+
+    BigInteger MainbalanceOfsGamer;//Biginteger to store balance of token inside wallet
+    BigInteger decimalsGamer;//Biginteger to store decimal settings for the token in wallet
+    string symbolsGamer;//string to store symbol of token in wallet
+    BigInteger totalSupplysGamer;//Biginteger to store totalSupply of tokens
+    string nameContractsGamer;//string to store name of the contract (BEP20)
+
     BigInteger DecimalValue; //stores Decimal calculation with power of 10
     BigInteger ActualBalance;//stores actual balance after dividing with 'DecimalValue'
     BigInteger MainBalance = 1000000000000000000;
 
-    private string chain = "binance";//name of the chain
+    BigInteger DecimalValuesGamer; //stores Decimal calculation with power of 10
+    BigInteger ActualBalancesGamer;//stores actual balance after dividing with 'DecimalValue'
+    BigInteger MainBalancesGamer = 1000000000000000000;
+
+    private string chain = "polygon";//name of the chain
     private string network = "mainnet";//name of the network
-    private string contract = "0xFBb4F2f342c6DaaB63Ab85b0226716C4D1e26F36";//address of the BEP20 contract
+    private string contract = "0x3f6b3595ecf70735d3f48d69b09c4e4506db3f47";//address of the BEP20 contract // GAMER
+    private string sGamercontract = "0xd1ecdc553651dab068486d9c4d066ecdc614416e";//address of the BEP20 contract // staked GAMER
 
     private string amount = "";
     private string toAccount = "0xe1E4160F4AcDf756AA0d2B02D786a42527560E82";
@@ -94,8 +106,19 @@ public class WalletManager : MonoBehaviour
     {
         DecimalValue = (BigInteger)Math.Pow(10, (double)decimals);
         ActualBalance = MainbalanceOf / DecimalValue;
-        //Debug.Log("Balance after decimal calculation: " + ActualBalance);
+        Debug.Log("Balance after decimal calculation: " + ActualBalance);
         MainUI.CoinText.text = ActualBalance.ToString();
+    }
+
+    /// <summary>
+    /// Display token sGamer balance on screen after connecting to wallet
+    /// </summary>
+    public void DisplayBalancesGamer()
+    {
+        DecimalValuesGamer = (BigInteger)Math.Pow(10, (double)decimalsGamer);
+        ActualBalancesGamer = MainbalanceOfsGamer / DecimalValuesGamer;
+        Debug.Log("Balance after decimal calculation sGamer: " + ActualBalancesGamer);
+        MainMenuViewController.Instance.ChangesGamerText(ActualBalancesGamer.ToString());
     }
     /// <summary>
     /// Called to connect wallet from "Connect Wallet" Button
@@ -145,6 +168,7 @@ public class WalletManager : MonoBehaviour
         MainUI.ConnectedBtn.SetActive(true);
         PrintWalletAddress();
         BEPBalanceOf();
+        BEPBalanceOfsGamer();
         Constants.WalletConnected = true;
 
     }
@@ -174,9 +198,20 @@ public class WalletManager : MonoBehaviour
     async public void BEPBalanceOf()
     {
         MainbalanceOf = await ERC20.BalanceOf(chain, network, contract, account);
-        //print("Balance: " + MainbalanceOf);
+        print("Balance: " + MainbalanceOf);
         DisplayBalance();
     }
+
+    /// <summary>
+    /// Call to get balance of specific BEp20/ERC20 contract
+    /// </summary>
+    async public void BEPBalanceOfsGamer()
+    {
+        MainbalanceOfsGamer = await ERC20.BalanceOf(chain, network, sGamercontract, account);
+        print("Balance of sGamer: " + MainbalanceOfsGamer);
+        DisplayBalancesGamer();
+    }
+
 
     /// <summary>
     /// Call to get name of specific BEp20/ERC20 contract
@@ -184,7 +219,16 @@ public class WalletManager : MonoBehaviour
     async public void BEPName()
     {
         nameContract = await ERC20.Name(chain, network, contract);
-        //print("name: " + nameContract);
+        print("name: " + nameContract);
+    }
+
+    /// <summary>
+    /// Call to get name of specific BEp20/ERC20 contract
+    /// </summary>
+    async public void BEPNamesGamer()
+    {
+        nameContractsGamer = await ERC20.Name(chain, network, sGamercontract);
+        print("name sGamer: " + nameContractsGamer);
     }
 
     /// <summary>
@@ -193,7 +237,13 @@ public class WalletManager : MonoBehaviour
     async public void BEPSymbol()
     {
         symbol = await ERC20.Symbol(chain, network, contract);
-        //print("Symbol: " + symbol);
+        print("Symbol: " + symbol);
+    }
+
+    async public void BEPSymbolsGamer()
+    {
+        symbolsGamer = await ERC20.Symbol(chain, network, sGamercontract);
+        print("Symbol sGamer: " + symbolsGamer);
     }
 
     /// <summary>
@@ -202,7 +252,16 @@ public class WalletManager : MonoBehaviour
     async public void BEPDecimals()
     {
         decimals = await ERC20.Decimals(chain, network, contract);
-       // print("Decimals: " + decimals);
+        print("Decimals: " + decimals);
+    }
+
+    /// <summary>
+    /// Call to get decimal of specific BEp20/ERC20 contract
+    /// </summary>
+    async public void BEPDecimalsGamer()
+    {
+        decimalsGamer = await ERC20.Decimals(chain, network, sGamercontract);
+        print("Decimals sGamer: " + decimalsGamer);
     }
 
     /// <summary>
@@ -211,7 +270,17 @@ public class WalletManager : MonoBehaviour
     async public void BEPTotalSupply()
     {
         totalSupply = await ERC20.TotalSupply(chain, network, contract);
-        //print("Total Supply: " + totalSupply);
+        print("Total Supply: " + totalSupply);
+    }
+
+
+    /// <summary>
+    /// Call to get total supply of specific BEp20/ERC20 contract
+    /// </summary>
+    async public void BEPTotalSupplysGamer()
+    {
+        totalSupplysGamer = await ERC20.TotalSupply(chain, network, sGamercontract);
+        print("Total Supply sGamer: " + totalSupplysGamer);
     }
 
     public void OnSkip()
@@ -226,8 +295,9 @@ public class WalletManager : MonoBehaviour
     /// <summary>
     /// Trnasfer BEP20 token
     /// </summary>
-    async public void TransferToken(int _amount)
+    async public void TransferToken(int _amount, bool BuyTries = false)
     {
+        Constants.BuyingTries = BuyTries;
         BigInteger _mainAmount = _amount * MainBalance;
         amount = _mainAmount.ToString();
         string method = "transfer";
@@ -244,12 +314,31 @@ public class WalletManager : MonoBehaviour
             string response = await Web3GL.SendContract(method, abi, contract, args, value, gas);
             Debug.Log(response);
             BEPBalanceOf();
-            MainMenuViewController.Instance.StartTournament(true);
+            BEPBalanceOfsGamer();
+
+            if (Constants.BuyingTries)
+            {
+                Constants.BuyingTries = false;
+                MainMenuViewController.Instance.OnBuyTires(true);
+            }
+            else
+            {
+                MainMenuViewController.Instance.StartTournament(true);
+            }
         }
         catch (Exception e)
         {
-            Debug.LogException(e, this);
-            MainMenuViewController.Instance.StartTournament(false);
+            Debug.LogException(e, this);  
+
+            if (Constants.BuyingTries)
+            {
+                Constants.BuyingTries = false;
+                MainMenuViewController.Instance.OnBuyTires(false);
+            }
+            else
+            {
+                MainMenuViewController.Instance.StartTournament(false);
+            }
         }
     }
 
@@ -271,6 +360,42 @@ public class WalletManager : MonoBehaviour
         return _havebalance;
     }
 
+    public bool CheckBalanceORTryForFreeTournament()
+    {
+        bool _havebalance = false;
+        if (TournamentManager.Instance)
+        {
+             if (ActualBalance >= Constants.FreeGamerPirce && FirebaseManager.Instance.PlayerData.FreeTryGAMER==0)
+              {
+                  _havebalance = true;
+              }
+        }
+        else
+        {
+            Debug.LogError("TournamentManager instance is null");
+        }
+
+        return _havebalance;
+    }
+
+    public bool CheckBalanceForBuyingTournament()
+    {
+        bool _havebalance = false;
+        if (TournamentManager.Instance)
+        {
+            if (ActualBalance >= Constants.Tries12Fees)
+            {
+                _havebalance = true;
+            }
+        }
+        else
+        {
+            Debug.LogError("TournamentManager instance is null");
+        }
+
+        return _havebalance;
+    }
+
     public void UpdateWallet()
     {
         BEPName();
@@ -278,7 +403,15 @@ public class WalletManager : MonoBehaviour
         BEPDecimals();
         BEPTotalSupply();
 
+        BEPNamesGamer();
+        BEPSymbolsGamer();
+        BEPDecimalsGamer();
+        BEPTotalSupplysGamer();
+
         if (Constants.WalletConnected)
+        {
             BEPBalanceOf();
+            BEPBalanceOfsGamer();
+        }
     }
 }

@@ -12,6 +12,8 @@ public class UserData
     public string UserName { get; set; }
     public string WalletAddress { get; set; }
     public double TimeSeconds { get; set; }
+    public int amountOfFreeTries { get; set; }
+    public int FreeTryGAMER { get; set; }
 }
 
 
@@ -141,8 +143,12 @@ public class FirebaseManager : MonoBehaviour
             Debug.Log(_walletID);
             Debug.Log(PlayerData.WalletAddress);
             Debug.Log(PlayerData.UserName);
-            //Debug.Log(EncryptDecrypt(PlayerData.TimeSeconds));
+            Debug.Log(PlayerData.amountOfFreeTries);
+            Debug.Log(PlayerData.FreeTryGAMER);
             Debug.Log(PlayerData.TimeSeconds);
+
+            if(MainMenuViewController.Instance)
+                MainMenuViewController.Instance.TriesText.text = PlayerData.amountOfFreeTries.ToString();
         }
         else
         {
@@ -150,8 +156,13 @@ public class FirebaseManager : MonoBehaviour
             PlayerData = new UserData();
             PlayerData.WalletAddress = _walletID;
             PlayerData.UserName = _username;
-            //PlayerData.TimeSeconds = EncryptDecrypt("0");
+            PlayerData.amountOfFreeTries = 0;
             PlayerData.TimeSeconds = 0;
+            PlayerData.FreeTryGAMER = 0;
+
+            if (MainMenuViewController.Instance)
+                MainMenuViewController.Instance.TriesText.text = "0";
+
             AddFireStoreData(PlayerData);
         }
 

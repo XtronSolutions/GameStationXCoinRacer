@@ -131,15 +131,26 @@ public class TournamentManager : MonoBehaviour
                 }
                 else
                 {
-                    Constants.TournamentActive = true;
-                    RemainingTime = TimeSpan.FromSeconds(RemainingTimeSeconds);
 
-                    //Debug.LogError(RemainingTime.Days.ToString() + ":" + RemainingTime.Hours.ToString() + ":" + RemainingTime.Minutes.ToString() + ":" + RemainingTime.Seconds.ToString());
+                    if (Mathf.Sign((float)RemainingTimeSeconds) == -1)
+                    {
+                        Constants.TournamentActive = false;
+                        ManipulateTournamnetUIActivness(false, false, false, false, true, false);
+                        StartTimer = false;
+                        TournamentStartTimer = false;
+                    }
+                    else
+                    {
+                        Constants.TournamentActive = true;
+                        RemainingTime = TimeSpan.FromSeconds(RemainingTimeSeconds);
 
-                    ManipulateTournamnetUIActivness(true, true, true, false, false,false);
-                    ManipulateTournamnetUIData("Week " + _data.Week.ToString(), RemainingTime.Days.ToString() + ":" + RemainingTime.Hours.ToString() + ":" + RemainingTime.Minutes.ToString() + ":" + RemainingTime.Seconds.ToString(), "*Entry Ticket : " + _data.TicketPrice.ToString() + " $CRACE");
-                    StartTimer = true;
-                    TournamentStartTimer = false;
+                        //Debug.LogError(RemainingTime.Days.ToString() + ":" + RemainingTime.Hours.ToString() + ":" + RemainingTime.Minutes.ToString() + ":" + RemainingTime.Seconds.ToString());
+
+                        ManipulateTournamnetUIActivness(true, true, true, false, false, false);
+                        ManipulateTournamnetUIData("Week " + _data.Week.ToString(), RemainingTime.Days.ToString() + ":" + RemainingTime.Hours.ToString() + ":" + RemainingTime.Minutes.ToString() + ":" + RemainingTime.Seconds.ToString(), "*Entry Ticket : " + _data.TicketPrice.ToString() + " $CRACE");
+                        StartTimer = true;
+                        TournamentStartTimer = false;
+                    }
                 }
             }
         }else

@@ -34,7 +34,7 @@ public class RaceManager : MonoBehaviour
 
     IEnumerator StartTimerCountDown()
     {
-        Debug.Log(RaceCounter);
+        //Debug.Log(RaceCounter);
         if(RaceCounter<-1)
         {
             GameStartTimer.text = "";

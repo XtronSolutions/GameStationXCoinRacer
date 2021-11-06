@@ -31,6 +31,7 @@ public class WayPoint : MonoBehaviour
             if(IsStartWayPoint & !GameStarted)
             {
                 GameStarted = true;
+                Debug.Log("start waypoint");
                 TimeHandler.Instance.timerIsRunning = true;
             }
         }

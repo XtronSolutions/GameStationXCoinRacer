@@ -19,6 +19,17 @@ public class TournamentUI
     public GameObject LoaderObj;
     public TextMeshProUGUI TournamentStartText;
 }
+
+[Serializable]
+public class TournamentSelectionUI
+{
+    public GameObject MainScreen;
+    public Button FreeTry;
+    public Button PlayFromTries;
+    public Button Buy12Tries;
+    public Button PlayOnce;
+    public Button Cancel;
+}
 public class MainMenuViewController : MonoBehaviour
 {
     public static CarSettings SelectedCar;
@@ -51,8 +62,11 @@ public class MainMenuViewController : MonoBehaviour
 
     [SerializeField] private GameObject MessageUI;
     [SerializeField] private TextMeshProUGUI ToastMsgText = null;
+    public TextMeshProUGUI TriesText = null;
+    public TextMeshProUGUI SGamerText = null;
 
     public TournamentUI UITournament;
+    public TournamentSelectionUI TournamentUISelection;
 
     private int _currentSelectedCarIndex = 0;
     private int _currentlySelectedLevelIndex = 0;
@@ -84,6 +98,181 @@ public class MainMenuViewController : MonoBehaviour
         _prevMapButton.onClick.AddListener(OnPrevMap);
 
         OnLevelSelected(0);
+        TournamentSelection_EventListeners();
+    }
+
+    public void ToggleTournamentSelectionScreen(bool _state)
+    {
+        TournamentUISelection.MainScreen.SetActive(_state);
+    }
+
+    public void TournamentSelection_EventListeners()
+    {
+        TournamentUISelection.FreeTry.onClick.AddListener(OnButtonPressed_FreeTry);
+        TournamentUISelection.Buy12Tries.onClick.AddListener(OnButtonPressed_Buy12Tries);
+        TournamentUISelection.PlayFromTries.onClick.AddListener(OnButtonPressed_PlayFromTry);
+        TournamentUISelection.PlayOnce.onClick.AddListener(OnButtonPressed_BuyOnceAndPlay);
+        TournamentUISelection.Cancel.onClick.AddListener(DisableTournamentSelection);
+    }
+
+    public void DisableTournamentSelection()
+    {
+        ToggleTournamentSelectionScreen(false);
+    }
+
+    public void OnButtonPressed_FreeTry()
+    {
+        if (Constants.TournamentActive == true)
+        {
+            LoadingScreen.SetActive(true);
+            if (WalletManager.Instance)
+            {
+                if (WalletManager.Instance.CheckBalanceORTryForFreeTournament())
+                {
+                    FirebaseManager.Instance.PlayerData.FreeTryGAMER = 1;
+                    FirebaseManager.Instance.UpdatedFireStoreData(FirebaseManager.Instance.PlayerData);
+                    StartTournament(true);
+                    //WalletManager.Instance.TransferToken(TournamentManager.Instance.DataTournament.TicketPrice);
+                }
+                else
+                {
+                    LoadingScreen.SetActive(false);
+                    ShowToast(3f, "Insufficient $GAMER value or free try already availed");
+                }
+            }
+            else
+            {
+                LoadingScreen.SetActive(false);
+                Debug.LogError("WalletManager instance is null");
+                ShowToast(3f, "something went wrong, please try again");
+            }
+        }
+        else
+        {
+            LoadingScreen.SetActive(false);
+            ShowToast(3f, "No active tournament at the moment.");
+        }
+    }
+
+    public void OnButtonPressed_PlayFromTry()
+    {
+        if (Constants.TournamentActive == true)
+        {
+            LoadingScreen.SetActive(true);
+            if (WalletManager.Instance)
+            {
+                if (FirebaseManager.Instance.PlayerData.amountOfFreeTries>0)
+                {
+                    FirebaseManager.Instance.PlayerData.amountOfFreeTries -= 1;
+                    ChangeTriesText(FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
+                    FirebaseManager.Instance.UpdatedFireStoreData(FirebaseManager.Instance.PlayerData);
+                    StartTournament(true);
+                }
+                else
+                {
+                    LoadingScreen.SetActive(false);
+                    ShowToast(3f, "Insufficient number of tries.");
+                }
+            }
+            else
+            {
+                LoadingScreen.SetActive(false);
+                Debug.LogError("WalletManager instance is null");
+                ShowToast(3f, "something went wrong, please try again");
+            }
+        }
+        else
+        {
+            LoadingScreen.SetActive(false);
+            ShowToast(3f, "No active tournament at the moment.");
+        }
+    }
+
+    public void OnBuyTires(bool _success)
+    {
+        LoadingScreen.SetActive(false);
+        if (_success)
+        {
+            FirebaseManager.Instance.PlayerData.amountOfFreeTries += Constants.NumberTriesToBuy;
+            ChangeTriesText(FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
+            FirebaseManager.Instance.UpdatedFireStoreData(FirebaseManager.Instance.PlayerData);
+            ShowToast(3f, Constants.NumberTriesToBuy.ToString()+" tries were successfully added, total tries are "+ FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
+        }
+        else
+        {
+            ShowToast(3f, "something went wrong or transaction was rejected, please try again");
+        }
+    }
+    public void OnButtonPressed_Buy12Tries()
+    {
+        if (Constants.TournamentActive == true)
+        {
+            LoadingScreen.SetActive(true);
+            if (WalletManager.Instance)
+            {
+                if (WalletManager.Instance.CheckBalanceForBuyingTournament())
+                {
+                    WalletManager.Instance.TransferToken(Constants.Tries12Fees,true);
+                }
+                else
+                {
+                    LoadingScreen.SetActive(false);
+                    ShowToast(3f, "Insufficient $GAMER value, need "+Constants.Tries12Fees.ToString()+ " $GAMER");
+                }
+            }
+            else
+            {
+                LoadingScreen.SetActive(false);
+                Debug.LogError("WalletManager instance is null");
+                ShowToast(3f, "something went wrong, please try again");
+            }
+        }
+        else
+        {
+            LoadingScreen.SetActive(false);
+            ShowToast(3f, "No active tournament at the moment.");
+        }
+    }
+
+    public void OnButtonPressed_BuyOnceAndPlay()
+    {
+        if (Constants.TournamentActive == true)
+        {
+            LoadingScreen.SetActive(true);
+            if (WalletManager.Instance)
+            {
+                if (WalletManager.Instance.CheckBalanceTournament())
+                {
+                    WalletManager.Instance.TransferToken(TournamentManager.Instance.DataTournament.TicketPrice, false);
+                }
+                else
+                {
+                    LoadingScreen.SetActive(false);
+                    ShowToast(3f, "Insufficient $GAMER value, need " + TournamentManager.Instance.DataTournament.TicketPrice.ToString() + " $GAMER");
+                }
+            }
+            else
+            {
+                LoadingScreen.SetActive(false);
+                Debug.LogError("WalletManager instance is null");
+                ShowToast(3f, "something went wrong, please try again");
+            }
+        }
+        else
+        {
+            LoadingScreen.SetActive(false);
+            ShowToast(3f, "No active tournament at the moment.");
+        }
+    }
+
+    public void ChangeTriesText(string _text)
+    {
+        TriesText.text = _text;
+    }
+
+    public void ChangesGamerText(string _text)
+    {
+        SGamerText.text = _text;
     }
 
     private void OnNextMap()
@@ -128,29 +317,38 @@ public class MainMenuViewController : MonoBehaviour
         {
             if (Constants.TournamentActive == true)
             {
-                LoadingScreen.SetActive(true);
-                if (WalletManager.Instance)
-                {
-                    if (WalletManager.Instance.CheckBalanceTournament())
-                    {
-                        WalletManager.Instance.TransferToken(TournamentManager.Instance.DataTournament.TicketPrice);
-                    }
-                    else
-                    {
-                        LoadingScreen.SetActive(false);
-                        ShowToast(3f, "Insufficient $CRACE value.");
-                    }
-                }
-                else
-                {
-                    LoadingScreen.SetActive(false);
-                    Debug.LogError("WalletManager instance is null");
-                }
+                LoadingScreen.SetActive(false);
+                ToggleTournamentSelectionScreen(true);
             }else
             {
-                LoadingScreen.SetActive(false);
                 ShowToast(3f, "No active tournament at the moment.");
             }
+               
+            //if (Constants.TournamentActive == true)
+            //{
+            //    LoadingScreen.SetActive(true);
+            //    if (WalletManager.Instance)
+            //    {
+            //        if (WalletManager.Instance.CheckBalanceTournament())
+            //        {
+            //            WalletManager.Instance.TransferToken(TournamentManager.Instance.DataTournament.TicketPrice);
+            //        }
+            //        else
+            //        {
+            //            LoadingScreen.SetActive(false);
+            //            ShowToast(3f, "Insufficient $CRACE value.");
+            //        }
+            //    }
+            //    else
+            //    {
+            //        LoadingScreen.SetActive(false);
+            //        Debug.LogError("WalletManager instance is null");
+            //    }
+            //}else
+            //{
+            //    LoadingScreen.SetActive(false);
+            //    ShowToast(3f, "No active tournament at the moment.");
+            //}
         }
         else
         {
@@ -163,7 +361,7 @@ public class MainMenuViewController : MonoBehaviour
     {
         if (_canstart)
         {
-            ShowToast(2f, "Transaction was was successful");
+            //ShowToast(2f, "Transaction was was successful");
             LoadingScreen.SetActive(false);
             Constants.IsTournament = true;
             Constants.IsPractice = false;

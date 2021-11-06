@@ -297,19 +297,32 @@
         <script src="./static/js/main.5adc71f3.chunk.js"></script>
 		<script>
 		  var firebaseConfig = {
-		  apiKey: "AIzaSyDcLz0eTFpmf7pksItUB_AQ6YA2SNErx_8",
-		  authDomain: "coinracer-alpha-tournaments.firebaseapp.com",
-		  projectId: "coinracer-alpha-tournaments",
-		  storageBucket: "coinracer-alpha-tournaments.appspot.com",
-		  messagingSenderId: "764325202617",
-		  appId: "1:764325202617:web:89a0be23130fd4f6162968",
-		  measurementId: "G-9TQZBGZLD5"
+		  apiKey: "AIzaSyDQySnbs75wl8XvvsSAGAtZx9-NSUo4QnY",
+		  authDomain: "gamestationxcoinracer.firebaseapp.com",
+		  projectId: "gamestationxcoinracer",
+		  storageBucket: "gamestationxcoinracer.appspot.com",
+		  messagingSenderId: "947229990570",
+		  appId: "1:947229990570:web:18bc728c810780d386fad3",
+		  measurementId: "G-EX25BWR4S8"
 		};
 
 		  // Initialize Firebase
 		  firebase.initializeApp(firebaseConfig);
 		  console.log(firebase);
-		  _AuthenticateAnonymous("","","");
+		  AuthenticateAnonymousFirebase();
+		  
+		 function AuthenticateAnonymousFirebase () {
+		try {
+            firebase.auth().signInAnonymously().then(function () {
+				console.log("Anonymous login was successful");
+            }).catch(function (error) {
+                console.log(JSON.stringify(error, Object.getOwnPropertyNames(error)));
+            });
+
+        } catch (error) {
+                console.log(JSON.stringify(error, Object.getOwnPropertyNames(error)));
+        }
+		}
 		</script>
 
     </body>

@@ -16,5 +16,5 @@ Used to set the network
 43114 Avalanche Mainnet
 */
 
-window.web3NetworkId = 56;
-window.web3NetworkName = "Binance Smart Chain Mainnet"
+window.web3NetworkId = 137;
+window.web3NetworkName = "Matic"
