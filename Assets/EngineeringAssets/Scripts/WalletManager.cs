@@ -383,7 +383,7 @@ public class WalletManager : MonoBehaviour
         bool _havebalance = false;
         if (TournamentManager.Instance)
         {
-            if (ActualBalance >= Constants.Tries12Fees)
+            if (ActualBalancesGamer >= Constants.FreesGamerPirce && FirebaseManager.Instance.PlayerData.FreeTrysGAMER == 0)
             {
                 _havebalance = true;
             }

@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: car4
   m_EditorClassIdentifier: 
   carType: 3
-  Name: Awesome Car
+  Name: Cyber Car
   CarPrefab: {fileID: 7644685520093282575, guid: f21490ecc44918c4d9d40c0692fbffe7, type: 3}
   Icon: {fileID: 21300000, guid: 2c4ae9e988b549b47ae9c9d3ce3c3cf0, type: 3}

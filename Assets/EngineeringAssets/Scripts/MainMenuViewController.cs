@@ -25,9 +25,13 @@ public class TournamentSelectionUI
 {
     public GameObject MainScreen;
     public Button FreeTry;
+    public TextMeshProUGUI FreeTryText;
     public Button PlayFromTries;
-    public Button Buy12Tries;
+    public TextMeshProUGUI PlayFromTriesText;
+    public Button Free12Tries;
+    public TextMeshProUGUI Free12TriesText;
     public Button PlayOnce;
+    public TextMeshProUGUI PlayOnceText;
     public Button Cancel;
 }
 public class MainMenuViewController : MonoBehaviour
@@ -104,12 +108,33 @@ public class MainMenuViewController : MonoBehaviour
     public void ToggleTournamentSelectionScreen(bool _state)
     {
         TournamentUISelection.MainScreen.SetActive(_state);
+
+        if (_state)
+        {
+            UpdateText();
+        }
     }
 
+    public void UpdateText()
+    {
+        string text1 = "*1 free try for $GAMER greater than " + Constants.FreeGamerPirce.ToString();
+        string text2 = "*" + Constants.NumberTriesToBuy.ToString() + " FREE TRIES FOR sGAMER GREATER THAN " + Constants.FreesGamerPirce.ToString();
+        string text3 = "*play from remaining tries, " + FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString() + " tries remains.";
+        string text4 = "*Need " + TournamentManager.Instance.DataTournament.TicketPrice.ToString() + " $GAMER";
+        UpdateSlectionTexts(text1, text2, text3, text4);
+    }
+
+    public void UpdateSlectionTexts(string _freeTryText, string _free12TryText, string _playTriesText, string _playOnceText)
+    {
+        TournamentUISelection.FreeTryText.text = _freeTryText;
+        TournamentUISelection.Free12TriesText.text = _free12TryText;
+        TournamentUISelection.PlayFromTriesText.text = _playTriesText;
+        TournamentUISelection.PlayOnceText.text = _playOnceText;
+    }
     public void TournamentSelection_EventListeners()
     {
         TournamentUISelection.FreeTry.onClick.AddListener(OnButtonPressed_FreeTry);
-        TournamentUISelection.Buy12Tries.onClick.AddListener(OnButtonPressed_Buy12Tries);
+        TournamentUISelection.Free12Tries.onClick.AddListener(OnButtonPressed_Buy12Tries);
         TournamentUISelection.PlayFromTries.onClick.AddListener(OnButtonPressed_PlayFromTry);
         TournamentUISelection.PlayOnce.onClick.AddListener(OnButtonPressed_BuyOnceAndPlay);
         TournamentUISelection.Cancel.onClick.AddListener(DisableTournamentSelection);
@@ -129,9 +154,16 @@ public class MainMenuViewController : MonoBehaviour
             {
                 if (WalletManager.Instance.CheckBalanceORTryForFreeTournament())
                 {
+                    LoadingScreen.SetActive(false);
                     FirebaseManager.Instance.PlayerData.FreeTryGAMER = 1;
+                    FirebaseManager.Instance.PlayerData.amountOfFreeTries += 1;
+                    ChangeTriesText(FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
+
+                    ChangeTriesText(FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
+                    ShowToast(3f, "1 try was successfully added, total tries are " + FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
+                    UpdateText();
                     FirebaseManager.Instance.UpdatedFireStoreData(FirebaseManager.Instance.PlayerData);
-                    StartTournament(true);
+
                     //WalletManager.Instance.TransferToken(TournamentManager.Instance.DataTournament.TicketPrice);
                 }
                 else
@@ -166,6 +198,7 @@ public class MainMenuViewController : MonoBehaviour
                     FirebaseManager.Instance.PlayerData.amountOfFreeTries -= 1;
                     ChangeTriesText(FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
                     FirebaseManager.Instance.UpdatedFireStoreData(FirebaseManager.Instance.PlayerData);
+                    UpdateText();
                     StartTournament(true);
                 }
                 else
@@ -212,12 +245,19 @@ public class MainMenuViewController : MonoBehaviour
             {
                 if (WalletManager.Instance.CheckBalanceForBuyingTournament())
                 {
-                    WalletManager.Instance.TransferToken(Constants.Tries12Fees,true);
+                    FirebaseManager.Instance.PlayerData.FreeTrysGAMER = 1;
+                    FirebaseManager.Instance.PlayerData.amountOfFreeTries += 12;
+                    ChangeTriesText(FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
+                    FirebaseManager.Instance.UpdatedFireStoreData(FirebaseManager.Instance.PlayerData);
+                    ChangeTriesText(FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
+                    ShowToast(3f, Constants.NumberTriesToBuy.ToString() + " tries were successfully added, total tries are " + FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
+                    UpdateText();
+                    //WalletManager.Instance.TransferToken(Constants.Tries12Fees,true);
                 }
                 else
                 {
                     LoadingScreen.SetActive(false);
-                    ShowToast(3f, "Insufficient $GAMER value, need "+Constants.Tries12Fees.ToString()+ " $GAMER");
+                    ShowToast(3f, "Insufficient $GAMER value or free tries already availed");
                 }
             }
             else

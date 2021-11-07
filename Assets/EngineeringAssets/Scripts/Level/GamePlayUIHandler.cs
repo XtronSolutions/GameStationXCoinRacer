@@ -69,6 +69,7 @@ public class GamePlayUIHandler : MonoBehaviour
         {
             if (FirebaseManager.Instance)
             {
+                storedUsername = _username;
                 FirebaseManager.Instance.DocFetched = false;
                 FirebaseManager.Instance.ResultFetched = true;
                 Constants.PushingTime = true;
@@ -79,14 +80,15 @@ public class GamePlayUIHandler : MonoBehaviour
         }
     }
 
+    string storedUsername;
     public void SubmitTime()
     {
         if (!FirebaseManager.Instance)
             Debug.LogError("Firebase instance is null");
 
-        FirebaseManager.Instance.PlayerData.UserName = _username;
+        FirebaseManager.Instance.PlayerData.UserName = storedUsername;
 
-        Debug.Log("Previous Time: " + FirebaseManager.Instance.PlayerData.TimeSeconds.ToString() + " " + "Current Time" + Constants.GameSeconds.ToString()) ;
+        Debug.Log("Previous Time: " + FirebaseManager.Instance.PlayerData.TimeSeconds.ToString() + " " + "Current Time " + Constants.GameSeconds.ToString()) ;
 
         if (FirebaseManager.Instance.PlayerData.TimeSeconds == 0)
         {

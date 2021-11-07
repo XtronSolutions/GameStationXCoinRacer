@@ -14,6 +14,7 @@ public class UserData
     public double TimeSeconds { get; set; }
     public int amountOfFreeTries { get; set; }
     public int FreeTryGAMER { get; set; }
+    public int FreeTrysGAMER { get; set; }
 }
 
 
@@ -146,8 +147,9 @@ public class FirebaseManager : MonoBehaviour
             Debug.Log(PlayerData.amountOfFreeTries);
             Debug.Log(PlayerData.FreeTryGAMER);
             Debug.Log(PlayerData.TimeSeconds);
+            Debug.Log(PlayerData.FreeTrysGAMER);
 
-            if(MainMenuViewController.Instance)
+            if (MainMenuViewController.Instance)
                 MainMenuViewController.Instance.TriesText.text = PlayerData.amountOfFreeTries.ToString();
         }
         else
@@ -159,6 +161,7 @@ public class FirebaseManager : MonoBehaviour
             PlayerData.amountOfFreeTries = 0;
             PlayerData.TimeSeconds = 0;
             PlayerData.FreeTryGAMER = 0;
+            PlayerData.FreeTrysGAMER = 0;
 
             if (MainMenuViewController.Instance)
                 MainMenuViewController.Instance.TriesText.text = "0";

@@ -13,8 +13,8 @@ public static class Constants
     public static bool MoveCar = false;
     public static bool PushingTime = false;
     public static double GameSeconds = 0;
-    public static int Tries12Fees = 1;//100
     public static int FreeGamerPirce = 1;//100
+    public static int FreesGamerPirce = 1;//100
     public static bool BuyingTries = false;
     public static int NumberTriesToBuy = 12;
 
