@@ -25,15 +25,33 @@ public class EndDate
     public double nanoseconds { get; set; }
 }
 
+public class HHEndDate
+{
+    public double seconds { get; set; }
+    public double nanoseconds { get; set; }
+}
+
+public class HHStartDate
+{
+    public double seconds { get; set; }
+    public double nanoseconds { get; set; }
+}
+
 public class TournamentData
 {
     public Timestamp timestamp { get; set; }
     public int TicketPrice { get; set; }
     public StartDate StartDate { get; set; }
     public EndDate EndDate { get; set; }
+    public HHStartDate HHStartDate { get; set; }
+    public HHEndDate HHEndDate { get; set; }
     public int Week { get; set; }
-}
+    public int HappyHourPrice { get; set; }
 
+    public string HappyHourText { get; set; }
+
+    public bool IsDevBuild { get; set; }
+}
 
 public class TournamentManager : MonoBehaviour
 {
@@ -47,9 +65,13 @@ public class TournamentManager : MonoBehaviour
 
     bool StartTimer = false;
     bool TournamentStartTimer = false;
+    bool HappyHourStartTimer = false;
+    string HHMainTime;
     string MainTime;
     double RemainingTimeSeconds;
+    double RemainingTimeHH;//remaining time for happy hour
     double StartTimeDiffSeconds;
+    double StartTimeDiffSecondsHH;
     TimeSpan RemainingTime;
     TimeSpan TournamentRemainingTime;
 
@@ -62,29 +84,41 @@ public class TournamentManager : MonoBehaviour
     string textfieldHours;//string store converstion of hours into string for display
     string textfieldMinutes;//string store converstion of minutes into string for display
     string textfieldSeconds;//string store converstion of seconds into string for display
+
+
+    float HHtimeSpanConversionDays;//var to hold days after converstion from seconds
+    float HHtimeSpanConversionHours;//var to hold hours after converstion from seconds
+    float HHtimeSpanConversiondMinutes;//var to hold minutes after converstion from seconds
+    float HHtimeSpanConversionSeconds;//var to hold seconds after converstion from float seconds
+
+    string HHtextfielddays;//string store converstion of days into string for display
+    string HHtextfieldHours;//string store converstion of hours into string for display
+    string HHtextfieldMinutes;//string store converstion of minutes into string for display
+    string HHtextfieldSeconds;//string store converstion of seconds into string for display
     private void OnEnable()
     {
         Instance = this;
         StartTimer = false;
         TournamentStartTimer = false;
+        HappyHourStartTimer = false;
         GetTournamentDataDB();
     }
     // Update is called once per frame
     void Update()
     {
-        if(StartTimer)
+        if (StartTimer)
         {
             RemainingTimeSeconds -= Time.deltaTime;
             ConvertTime(RemainingTimeSeconds);
             DisplayTournamentTimer();
 
-            if(RemainingTimeSeconds<=0)
+            if (RemainingTimeSeconds <= 0)
             {
                 MainMenuViewController.Instance.UITournament.TimerText.text = "0:0:0:0";
                 StartTimer = false;
                 GetTournamentDataDB();
             }
-        }else if(TournamentStartTimer)
+        } else if (TournamentStartTimer)
         {
             StartTimeDiffSeconds -= Time.deltaTime;
             ConvertTime(StartTimeDiffSeconds);
@@ -95,6 +129,21 @@ public class TournamentManager : MonoBehaviour
                 MainMenuViewController.Instance.UITournament.TimerText.text = "0:0:0:0";
                 TournamentStartTimer = false;
                 GetTournamentDataDB();
+            }
+        }
+
+        if (HappyHourStartTimer)
+        {
+            RemainingTimeHH -= Time.deltaTime;
+            ConvertTimeHH(RemainingTimeHH);
+            DisplayHappyHourTimer();
+
+            if(RemainingTimeHH <= 0)
+            {
+                Constants.HappyHourStarted = false;
+                HappyHourStartTimer = false;
+                MainMenuViewController.Instance.ChangeHappyHourTimerText_HappyHourUI("0:0:0:0");
+                MainMenuViewController.Instance.ToggleScreen_HappyHourUI(false);
             }
         }
     }
@@ -131,7 +180,6 @@ public class TournamentManager : MonoBehaviour
                 }
                 else
                 {
-
                     if (Mathf.Sign((float)RemainingTimeSeconds) == -1)
                     {
                         Constants.TournamentActive = false;
@@ -143,11 +191,8 @@ public class TournamentManager : MonoBehaviour
                     {
                         Constants.TournamentActive = true;
                         RemainingTime = TimeSpan.FromSeconds(RemainingTimeSeconds);
-
-                        //Debug.LogError(RemainingTime.Days.ToString() + ":" + RemainingTime.Hours.ToString() + ":" + RemainingTime.Minutes.ToString() + ":" + RemainingTime.Seconds.ToString());
-
                         ManipulateTournamnetUIActivness(true, true, true, false, false, false);
-                        ManipulateTournamnetUIData("Week " + _data.Week.ToString(), RemainingTime.Days.ToString() + ":" + RemainingTime.Hours.ToString() + ":" + RemainingTime.Minutes.ToString() + ":" + RemainingTime.Seconds.ToString(), "*Entry Ticket : " + _data.TicketPrice.ToString() + " $CRACE");
+                        ManipulateTournamnetUIData("Week " + _data.Week.ToString(), RemainingTime.Days.ToString() + ":" + RemainingTime.Hours.ToString() + ":" + RemainingTime.Minutes.ToString() + ":" + RemainingTime.Seconds.ToString(), "*Entry Ticket : " + _data.TicketPrice.ToString() + " $GAMER");
                         StartTimer = true;
                         TournamentStartTimer = false;
                     }
@@ -159,6 +204,56 @@ public class TournamentManager : MonoBehaviour
             Constants.TournamentActive = false;
         }
     }
+
+    public void StartHappyHourCounter(bool isError = false, TournamentData _data = null)
+    {
+        if (MainMenuViewController.Instance) //if instance of UI class is created
+        {
+            if (isError)
+            {
+                MainMenuViewController.Instance.ToggleScreen_HappyHourUI(false);
+                Constants.HappyHourStarted = false;
+                HappyHourStartTimer = false;
+            }
+            else
+            {
+                RemainingTimeHH = _data.HHEndDate.seconds - _data.timestamp.seconds;
+                StartTimeDiffSecondsHH = _data.timestamp.seconds - _data.HHStartDate.seconds;
+
+                if (Mathf.Sign((float)StartTimeDiffSecondsHH) == -1)
+                {
+                    Constants.HappyHourStarted = false;
+                    HappyHourStartTimer = false;
+                    MainMenuViewController.Instance.ToggleScreen_HappyHourUI(false);
+
+                }
+                else
+                {
+                    if (Mathf.Sign((float)RemainingTimeSeconds) == -1)
+                    {
+                        Constants.HappyHourStarted = false;
+                        HappyHourStartTimer = false;
+                        MainMenuViewController.Instance.ToggleScreen_HappyHourUI(false);
+                    }
+                    else
+                    {
+                        MainMenuViewController.Instance.ChangeHappyHourText_HappyHourUI(_data.HappyHourText);
+                        MainMenuViewController.Instance.ToggleScreen_HappyHourUI(true);
+                        Constants.HappyHourStarted = true;
+                        HappyHourStartTimer = true;
+                    }
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError("MainMenuViewController instance is null");
+            Constants.HappyHourStarted = true;
+            HappyHourStartTimer = true;
+            MainMenuViewController.Instance.ToggleScreen_HappyHourUI(false);
+        }
+    }
+
 
     public void ConvertTime(double _sec)
     {
@@ -175,12 +270,32 @@ public class TournamentManager : MonoBehaviour
         textfieldSeconds = timeSpanConversionSeconds.ToString();
     }
 
+    public void ConvertTimeHH(double _sec)
+    {
+        //Store TimeSpan into variable.
+        HHtimeSpanConversionDays = TimeSpan.FromSeconds(_sec).Days;
+        HHtimeSpanConversionHours = TimeSpan.FromSeconds(_sec).Hours;
+        HHtimeSpanConversiondMinutes = TimeSpan.FromSeconds(_sec).Minutes;
+        HHtimeSpanConversionSeconds = TimeSpan.FromSeconds(_sec).Seconds;
+
+        //Convert TimeSpan variables into strings for textfield display
+        HHtextfielddays = HHtimeSpanConversionDays.ToString();
+        HHtextfieldHours = HHtimeSpanConversionHours.ToString();
+        HHtextfieldMinutes = HHtimeSpanConversiondMinutes.ToString();
+        HHtextfieldSeconds = HHtimeSpanConversionSeconds.ToString();
+    }
+
     public void DisplayTournamentTimer()
     {
         MainTime = textfielddays + ":" + textfieldHours + ":" + textfieldMinutes + ":" + textfieldSeconds;
         MainMenuViewController.Instance.UITournament.TimerText.text = MainTime;
     }
 
+    public void DisplayHappyHourTimer()
+    {
+        HHMainTime = HHtextfielddays + ":" + HHtextfieldHours + ":" + HHtextfieldMinutes + ":" + HHtextfieldSeconds;
+        MainMenuViewController.Instance.ChangeHappyHourTimerText_HappyHourUI(HHMainTime);
+    }
     public void GetTournamentDataDB()
     {
         FirebaseFirestore.GetTournamentData(CollectionPath, DocPath, gameObject.name, "OnGetTournamentData", "OnGetTournamentDataError");
@@ -193,7 +308,9 @@ public class TournamentManager : MonoBehaviour
         if (info != null && info != "null")
         {
             DataTournament = JsonConvert.DeserializeObject<TournamentData>(info);
+            Constants.IsTest= DataTournament.IsDevBuild;
             StartTournamentCounter(false, DataTournament);
+            StartHappyHourCounter(false, DataTournament);
         }
         else
         {
@@ -205,6 +322,7 @@ public class TournamentManager : MonoBehaviour
     {
         Debug.LogError(error);
         StartTournamentCounter(true,null);
+        StartHappyHourCounter(true, null);
     }
 
     public void ManipulateTournamnetUIActivness(bool LowerHeaderActive, bool TimerActive,bool FotterActive,bool LoaderObjActive,bool DisclaimerActive, bool DisclaimerActive2)

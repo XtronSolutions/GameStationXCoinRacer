@@ -27,6 +27,7 @@ public class GamePlayUIHandler : MonoBehaviour
     public static GamePlayUIHandler Instance;
     public InputFieldUI UIInputField;
     public PopMessageUI MessagePopUI;
+    string storedUsername;
 
     private void Start()
     {
@@ -73,14 +74,12 @@ public class GamePlayUIHandler : MonoBehaviour
                 FirebaseManager.Instance.DocFetched = false;
                 FirebaseManager.Instance.ResultFetched = true;
                 Constants.PushingTime = true;
-                FirebaseManager.Instance.StartCoroutine(FirebaseManager.Instance.CheckCreateUserDB(PlayerPrefs.GetString("Account"), ""));
+                FirebaseManager.Instance.StartCoroutine(FirebaseManager.Instance.FetchUserDB(PlayerPrefs.GetString("Account"), ""));
             }
-
             ToggleInputScreen_InputFieldUI(false);
         }
     }
 
-    string storedUsername;
     public void SubmitTime()
     {
         if (!FirebaseManager.Instance)
@@ -121,7 +120,5 @@ public class GamePlayUIHandler : MonoBehaviour
         yield return new WaitForSeconds(_sec);
         MessagePopUI.PopUpScreen.SetActive(false);
     }
-    #endregion
-
-    
+    #endregion    
 }

@@ -14,8 +14,10 @@ public static class Constants
     public static bool PushingTime = false;
     public static double GameSeconds = 0;
     public static int FreeGamerPirce = 1;//100
-    public static int FreesGamerPirce = 1;//100
+    public static int FreesGamerPirce = 300;//300
     public static bool BuyingTries = false;
-    public static int NumberTriesToBuy = 12;
-
+    public static int NumberTriesToBuy = 10;
+    public static string UserName = "";
+    public static bool HappyHourStarted = false;
+    public static bool IsTest = false;
 }

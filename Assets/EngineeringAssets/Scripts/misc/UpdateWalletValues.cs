@@ -11,7 +11,6 @@ public class UpdateWalletValues : MonoBehaviour
 
     public void UpdateData()
     {
-
         if(MainMenuViewController.Instance)
             MainMenuViewController.Instance.DisableTournamentSelection();
 
@@ -26,5 +25,4 @@ public class UpdateWalletValues : MonoBehaviour
             Invoke("UpdateData", 1f);
         }
     }
-
 }

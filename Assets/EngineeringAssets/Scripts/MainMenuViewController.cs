@@ -8,6 +8,15 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static Constants;
 
+
+[Serializable]
+public class HappyHourUI
+{
+    public GameObject MainScreen;
+    public TextMeshProUGUI HappHourText;
+    public TextMeshProUGUI HappyHourTimer;
+}
+
 [Serializable]
 public class TournamentUI
 {
@@ -37,7 +46,6 @@ public class TournamentSelectionUI
 public class MainMenuViewController : MonoBehaviour
 {
     public static CarSettings SelectedCar;
-
     public static MainMenuViewController Instance;
 
     [SerializeField] private GameObject GameModeSelectionObject = null;
@@ -71,17 +79,15 @@ public class MainMenuViewController : MonoBehaviour
 
     public TournamentUI UITournament;
     public TournamentSelectionUI TournamentUISelection;
+    public HappyHourUI UIHappyHour;
 
     private int _currentSelectedCarIndex = 0;
     private int _currentlySelectedLevelIndex = 0;
-
-    // Start is called before the first frame update
 
     private void OnEnable()
     {
         Instance = this;
     }
-
     void Start()
     {
         _audioSource.GetComponent<AudioSource>();
@@ -95,7 +101,7 @@ public class MainMenuViewController : MonoBehaviour
         _currentSelectedCarIndex = 0;
         UpdateSelectedCarVisual(_currentSelectedCarIndex);
         //_versionText.text = APP_VERSION;
-        
+
         _nextCarButton.onClick.AddListener(OnNextCar);
         _prevCarButton.onClick.AddListener(OnPrevCar);
         _nextMapButton.onClick.AddListener(OnNextMap);
@@ -118,9 +124,17 @@ public class MainMenuViewController : MonoBehaviour
     public void UpdateText()
     {
         string text1 = "*1 free try for $GAMER greater than " + Constants.FreeGamerPirce.ToString();
-        string text2 = "*" + Constants.NumberTriesToBuy.ToString() + " FREE TRIES FOR sGAMER GREATER THAN " + Constants.FreesGamerPirce.ToString();
-        string text3 = "*play from remaining tries, " + FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString() + " tries remains.";
-        string text4 = "*Need " + TournamentManager.Instance.DataTournament.TicketPrice.ToString() + " $GAMER";
+        //string text2 = "*" + Constants.NumberTriesToBuy.ToString() + " FREE TRIES FOR sGAMER GREATER THAN " + Constants.FreesGamerPirce.ToString();
+        string text2 = "*For 300 GAMER staked";
+        //string text3 = "*play from remaining tries, " + FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString() + " tries remains.";
+        string text3 = "*For GAMER Stakers";
+        string text4 = "";
+
+        if(Constants.HappyHourStarted)
+            text4 = "*Price: " + TournamentManager.Instance.DataTournament.HappyHourPrice.ToString() + " $GAMER";
+        else
+            text4 = "*Price: " + TournamentManager.Instance.DataTournament.TicketPrice.ToString() + " $GAMER";
+
         UpdateSlectionTexts(text1, text2, text3, text4);
     }
 
@@ -134,7 +148,7 @@ public class MainMenuViewController : MonoBehaviour
     public void TournamentSelection_EventListeners()
     {
         TournamentUISelection.FreeTry.onClick.AddListener(OnButtonPressed_FreeTry);
-        TournamentUISelection.Free12Tries.onClick.AddListener(OnButtonPressed_Buy12Tries);
+        TournamentUISelection.Free12Tries.onClick.AddListener(OnButtonPressed_BuyTries);
         TournamentUISelection.PlayFromTries.onClick.AddListener(OnButtonPressed_PlayFromTry);
         TournamentUISelection.PlayOnce.onClick.AddListener(OnButtonPressed_BuyOnceAndPlay);
         TournamentUISelection.Cancel.onClick.AddListener(DisableTournamentSelection);
@@ -193,7 +207,7 @@ public class MainMenuViewController : MonoBehaviour
             LoadingScreen.SetActive(true);
             if (WalletManager.Instance)
             {
-                if (FirebaseManager.Instance.PlayerData.amountOfFreeTries>0)
+                if (FirebaseManager.Instance.PlayerData.amountOfFreeTries > 0)
                 {
                     FirebaseManager.Instance.PlayerData.amountOfFreeTries -= 1;
                     ChangeTriesText(FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
@@ -229,14 +243,14 @@ public class MainMenuViewController : MonoBehaviour
             FirebaseManager.Instance.PlayerData.amountOfFreeTries += Constants.NumberTriesToBuy;
             ChangeTriesText(FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
             FirebaseManager.Instance.UpdatedFireStoreData(FirebaseManager.Instance.PlayerData);
-            ShowToast(3f, Constants.NumberTriesToBuy.ToString()+" tries were successfully added, total tries are "+ FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
+            ShowToast(3f, Constants.NumberTriesToBuy.ToString() + " tries were successfully added, total tries are " + FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
         }
         else
         {
             ShowToast(3f, "something went wrong or transaction was rejected, please try again");
         }
     }
-    public void OnButtonPressed_Buy12Tries()
+    public void OnButtonPressed_BuyTries()
     {
         if (Constants.TournamentActive == true)
         {
@@ -246,7 +260,7 @@ public class MainMenuViewController : MonoBehaviour
                 if (WalletManager.Instance.CheckBalanceForBuyingTournament())
                 {
                     FirebaseManager.Instance.PlayerData.FreeTrysGAMER = 1;
-                    FirebaseManager.Instance.PlayerData.amountOfFreeTries += 12;
+                    FirebaseManager.Instance.PlayerData.amountOfFreeTries += Constants.NumberTriesToBuy;
                     ChangeTriesText(FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
                     FirebaseManager.Instance.UpdatedFireStoreData(FirebaseManager.Instance.PlayerData);
                     ChangeTriesText(FirebaseManager.Instance.PlayerData.amountOfFreeTries.ToString());
@@ -283,12 +297,19 @@ public class MainMenuViewController : MonoBehaviour
             {
                 if (WalletManager.Instance.CheckBalanceTournament())
                 {
-                    WalletManager.Instance.TransferToken(TournamentManager.Instance.DataTournament.TicketPrice, false);
+                    if(Constants.HappyHourStarted)
+                        WalletManager.Instance.TransferToken(TournamentManager.Instance.DataTournament.HappyHourPrice, false);
+                    else
+                        WalletManager.Instance.TransferToken(TournamentManager.Instance.DataTournament.TicketPrice, false);
                 }
                 else
                 {
                     LoadingScreen.SetActive(false);
-                    ShowToast(3f, "Insufficient $GAMER value, need " + TournamentManager.Instance.DataTournament.TicketPrice.ToString() + " $GAMER");
+
+                    if (Constants.HappyHourStarted)
+                        ShowToast(3f, "Insufficient $GAMER value, need " + TournamentManager.Instance.DataTournament.HappyHourPrice.ToString() + " $GAMER");
+                    else
+                        ShowToast(3f, "Insufficient $GAMER value, need " + TournamentManager.Instance.DataTournament.TicketPrice.ToString() + " $GAMER");
                 }
             }
             else
@@ -330,25 +351,25 @@ public class MainMenuViewController : MonoBehaviour
         {
             newIndex = _levelsSettings.Count + newIndex;
         }
-    
+
         OnLevelSelected(newIndex);
     }
 
     private void OnLevelSelected(int i)
     {
         _currentlySelectedLevelIndex = i;
-        _selectedMapImage.sprite =  _levelsSettings[i].Icon;
+        _selectedMapImage.sprite = _levelsSettings[i].Icon;
         _levelNameText.text = _levelsSettings[i].LevelName;
     }
-    
+
     private void OnGoToCarSelection()
     {
-       Constants.IsTournament = false;
-       Constants.IsPractice = true;
-       GameModeSelectionObject.SetActive(false);
-       CarSelectionObject.SetActive(true);
-       CarSelection3dObject.SetActive(true);
-       MapSelection.SetActive(false);
+        Constants.IsTournament = false;
+        Constants.IsPractice = true;
+        GameModeSelectionObject.SetActive(false);
+        CarSelectionObject.SetActive(true);
+        CarSelection3dObject.SetActive(true);
+        MapSelection.SetActive(false);
     }
 
     public void OnGoToCarSelectionTournament()
@@ -357,38 +378,13 @@ public class MainMenuViewController : MonoBehaviour
         {
             if (Constants.TournamentActive == true)
             {
+                //OnButtonPressed_BuyOnceAndPlay();
                 LoadingScreen.SetActive(false);
                 ToggleTournamentSelectionScreen(true);
-            }else
+            } else
             {
                 ShowToast(3f, "No active tournament at the moment.");
             }
-               
-            //if (Constants.TournamentActive == true)
-            //{
-            //    LoadingScreen.SetActive(true);
-            //    if (WalletManager.Instance)
-            //    {
-            //        if (WalletManager.Instance.CheckBalanceTournament())
-            //        {
-            //            WalletManager.Instance.TransferToken(TournamentManager.Instance.DataTournament.TicketPrice);
-            //        }
-            //        else
-            //        {
-            //            LoadingScreen.SetActive(false);
-            //            ShowToast(3f, "Insufficient $CRACE value.");
-            //        }
-            //    }
-            //    else
-            //    {
-            //        LoadingScreen.SetActive(false);
-            //        Debug.LogError("WalletManager instance is null");
-            //    }
-            //}else
-            //{
-            //    LoadingScreen.SetActive(false);
-            //    ShowToast(3f, "No active tournament at the moment.");
-            //}
         }
         else
         {
@@ -397,7 +393,7 @@ public class MainMenuViewController : MonoBehaviour
         }
     }
 
-    public void StartTournament(bool _canstart=false)
+    public void StartTournament(bool _canstart = false)
     {
         if (_canstart)
         {
@@ -409,7 +405,7 @@ public class MainMenuViewController : MonoBehaviour
             CarSelectionObject.SetActive(true);
             CarSelection3dObject.SetActive(true);
             MapSelection.SetActive(false);
-        }else
+        } else
         {
             LoadingScreen.SetActive(false);
             ShowToast(3f, "Transaction was not successful, please try again.");
@@ -459,7 +455,7 @@ public class MainMenuViewController : MonoBehaviour
         {
             newIndex = _selecteableCars.Count + newIndex;
         }
-    
+
         UpdateSelectedCarVisual(newIndex);
     }
 
@@ -477,7 +473,7 @@ public class MainMenuViewController : MonoBehaviour
         SceneManager.LoadScene(_levelsSettings[_currentlySelectedLevelIndex].SceneName);
     }
 
-    private void ShowToast(float _time,string _msg)
+    private void ShowToast(float _time, string _msg)
     {
         MessageUI.SetActive(true);
         ToastMsgText.text = _msg;
@@ -494,4 +490,23 @@ public class MainMenuViewController : MonoBehaviour
     {
         _audioSource.PlayOneShot(_buttonPressClip);
     }
+
+    #region Happy Hour UI
+
+    public void ToggleScreen_HappyHourUI(bool _state)
+    {
+        UIHappyHour.MainScreen.SetActive(_state);
+    }
+
+    public void ChangeHappyHourText_HappyHourUI(string txt)
+    {
+        UIHappyHour.HappHourText.text = txt;
+    }
+
+    public void ChangeHappyHourTimerText_HappyHourUI(string txt)
+    {
+        UIHappyHour.HappyHourTimer.text = txt;
+    }
+    #endregion
+
 }

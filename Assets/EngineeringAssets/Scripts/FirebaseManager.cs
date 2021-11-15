@@ -17,6 +17,13 @@ public class UserData
     public int FreeTrysGAMER { get; set; }
 }
 
+public class AuthCredentials
+{
+    public string Email { get; set; }
+    public string Password { get; set; }
+
+    public string UserName { get; set; }
+}
 
 public class FirebaseManager : MonoBehaviour
 {
@@ -30,6 +37,9 @@ public class FirebaseManager : MonoBehaviour
     public static FirebaseManager Instance;
 
     [HideInInspector]
+    public AuthCredentials Credentails;
+
+    [HideInInspector]
     public bool WalletConnected = false;
 
     string DocPath = "users";
@@ -37,6 +47,10 @@ public class FirebaseManager : MonoBehaviour
     public bool DocFetched = false;
     [HideInInspector]
     public bool ResultFetched = false;
+
+    bool UserDataFetched = false;
+    bool FetchUserData = false;
+
     void Start()
     {
         if (!Instance)
@@ -101,8 +115,6 @@ public class FirebaseManager : MonoBehaviour
 
     public void GetFireStoreData(string _collectionID,string _docID)
     {
-        DocFetched = false;
-        ResultFetched = false;
         FirebaseFirestore.GetDocument(_collectionID, _docID, gameObject.name, "OnDocGet", "OnDocGetError");
     }
 
@@ -113,14 +125,18 @@ public class FirebaseManager : MonoBehaviour
         if (info == null || info=="null")
         {
             DocFetched = false;
+            UserDataFetched = false;
             ResultFetched = true;
+            FetchUserData = true;
             Debug.LogError("info is null for OnDocGet");
         }
         else
         {
             PlayerData = JsonConvert.DeserializeObject<UserData>(info);
+            UserDataFetched = true;
             DocFetched = true;
             ResultFetched = true;
+            FetchUserData = true;
            // Debug.Log(info);
             //Debug.Log("info is not null");
         }
@@ -128,13 +144,49 @@ public class FirebaseManager : MonoBehaviour
 
     public void OnDocGetError(string error)
     {
+        UserDataFetched = false;
         DocFetched = false;
         ResultFetched = true;
+        FetchUserData = true;
         Debug.LogError(error);
     }
 
-     public IEnumerator CheckCreateUserDB(string _walletID,string _username)
+    public IEnumerator FetchUserDB(string _walletID, string _username)
     {
+        UserDataFetched = false;
+        FetchUserData = false;
+        GetFireStoreData(DocPath, _walletID);
+        yield return new WaitUntil(() => FetchUserData == true);
+        if (UserDataFetched)
+        {
+            Debug.Log("user already exists!");
+            Debug.Log(_walletID);
+            Debug.Log(PlayerData.WalletAddress);
+            Debug.Log(PlayerData.UserName);
+            Debug.Log(PlayerData.amountOfFreeTries);
+            Debug.Log(PlayerData.FreeTryGAMER);
+            Debug.Log(PlayerData.TimeSeconds);
+            Debug.Log(PlayerData.FreeTrysGAMER);
+            Constants.UserName = PlayerData.UserName;
+
+            if (Constants.PushingTime)
+            {
+                Constants.PushingTime = false;
+                GamePlayUIHandler.Instance.SubmitTime();
+            }
+        }
+        else
+        {
+            Debug.Log("something went wrong with data fetching, trying again");
+            StartCoroutine(FetchUserDB(PlayerPrefs.GetString("Account"), ""));
+            yield return null;
+        }
+    }
+
+    public IEnumerator CheckCreateUserDB(string _walletID,string _username)
+    {
+        DocFetched = false;
+        ResultFetched = false;
         GetFireStoreData(DocPath, _walletID);
         yield return new WaitUntil(() => ResultFetched == true);
         
@@ -184,7 +236,9 @@ public class FirebaseManager : MonoBehaviour
 
     public void OnDocUpdate(string info)
     {
-        RaceManager.Instance.RaceEnded();
+        if(RaceManager.Instance)
+            RaceManager.Instance.RaceEnded();
+
         Debug.Log("Doc Updated");
         Debug.Log(info);
     }
@@ -225,5 +279,22 @@ public class FirebaseManager : MonoBehaviour
             outSb.Append(c);
         }
         return outSb.ToString();
+    }
+
+    public void CheckEmailForAuth(string _email, string _pass, string _username)
+    {
+        Credentails.Email = _email;
+        Credentails.Password = _pass;
+        Credentails.UserName = _username;
+        FirebaseAuth.CheckEmail(_email, gameObject.name, "OnEmailCheck", "OnEmailCheckError");
+    }
+
+    public void OnEmailCheck(string info)
+    {
+        Debug.Log(info);
+        Debug.Log("email existed");
+
+        //if (MainMenuViewController.Instance)
+        //MainMenuViewController.Instance.EmailAlreadyExisted();
     }
 }

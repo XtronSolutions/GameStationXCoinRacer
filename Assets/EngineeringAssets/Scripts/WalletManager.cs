@@ -347,7 +347,13 @@ public class WalletManager : MonoBehaviour
         bool _havebalance = false;
         if (TournamentManager.Instance)
         {
-            if (ActualBalance >= TournamentManager.Instance.DataTournament.TicketPrice)
+            int _ticket = 0;
+            if (Constants.HappyHourStarted)
+                _ticket = TournamentManager.Instance.DataTournament.HappyHourPrice;
+            else
+                _ticket = TournamentManager.Instance.DataTournament.TicketPrice;
+
+            if (ActualBalance >= _ticket)
             {
                 _havebalance = true;
             }

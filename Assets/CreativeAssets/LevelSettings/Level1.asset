@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LevelName: West Virginia
   SceneName: Level1
-  Icon: {fileID: 21300000, guid: cfebd661a5417f348a73c37a4663fc75, type: 3}
+  Icon: {fileID: 21300000, guid: d2ac76f971d09284fbe5c5fc6ab8b4bf, type: 3}

@@ -61,5 +61,15 @@ namespace FirebaseWebGL.Scripts.FirebaseBridge
         /// <param name="fallback"> Name of the method to call when the operation was unsuccessful. Method must have signature: void Method(string output). Will return a serialized FirebaseError object </param>
         [DllImport("__Internal")]
         public static extern void AuthenticateAnonymous(string objectName, string callback, string fallback);
+
+        /// <summary>
+        /// check mail in auth
+        /// </summary>
+        /// <param name="Email"> Name of the gameobject to call the callback/fallback of </param>
+        /// <param name="objectName"> Name of the gameobject to call the callback/fallback of </param>
+        /// <param name="callback"> Name of the method to call when the operation was successful. Method must have signature: void Method(string output) </param>
+        /// <param name="fallback"> Name of the method to call when the operation was unsuccessful. Method must have signature: void Method(string output). Will return a serialized FirebaseError object </param>
+        [DllImport("__Internal")]
+        public static extern void CheckEmail(string email, string objectName, string callback, string fallback);
     }
 }

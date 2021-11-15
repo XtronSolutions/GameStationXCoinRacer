@@ -8,7 +8,6 @@ using TMPro;
 
 public class RaceManager : MonoBehaviour
 {
-
     [SerializeField] private List<WayPoint> _wayPoints = new List<WayPoint>();
     [SerializeField] private int _requiredNumberOfLaps = 3;
     [SerializeField] private GameObject _pasueMenuObject = null;
@@ -18,14 +17,18 @@ public class RaceManager : MonoBehaviour
     [SerializeField] private AudioClip _buttonPressClip = null;
     [SerializeField] private AudioSource _audioSource = null;
     [SerializeField] private TextMeshProUGUI GameStartTimer = null;
+    public GameObject ForceRaceEndButton;
     private int _currentWayPointIndex = 1;
     private int _lapsCounter;
-
     public static RaceManager Instance;
     int RaceCounter = 3;
-
     private void OnEnable()
     {
+        if (Constants.IsTest)
+            ForceRaceEndButton.SetActive(true);
+        else
+            ForceRaceEndButton.SetActive(false);
+
         RaceCounter = 3;
         Constants.MoveCar = false;
         GameStartTimer.text = RaceCounter.ToString();
@@ -34,7 +37,6 @@ public class RaceManager : MonoBehaviour
 
     IEnumerator StartTimerCountDown()
     {
-        //Debug.Log(RaceCounter);
         if(RaceCounter<-1)
         {
             GameStartTimer.text = "";
@@ -56,7 +58,7 @@ public class RaceManager : MonoBehaviour
             StartCoroutine(StartTimerCountDown());
         }
     }
-    // Start is called before the first frame update
+
     void Start()
     {
         Instance = this;
@@ -99,8 +101,7 @@ public class RaceManager : MonoBehaviour
             }
         }
     }
-
-    private void OnRaceDone()
+    public void OnRaceDone()
     {
         Constants.GameSeconds = 0;
 
@@ -136,7 +137,6 @@ public class RaceManager : MonoBehaviour
             LeaderboardManager.Instance.EnableGameplayLeaderboard();
         }
     }
-
     public void TogglePauseMenu()
     {
         _pasueMenuObject.SetActive(!_pasueMenuObject.activeSelf);
