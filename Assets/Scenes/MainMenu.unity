@@ -766,7 +766,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '*Entry ticket: <b>50</b> $CRACE'
+  m_text: '*Entry ticket: <b>50</b> $GAMER'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: aecf25e54e09c7f4fba570eb5896c768, type: 2}
   m_sharedMaterial: {fileID: -987019306340266323, guid: aecf25e54e09c7f4fba570eb5896c768, type: 2}
@@ -2732,7 +2732,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -152.2, y: -4.100006}
+  m_AnchoredPosition: {x: -152.20001, y: -4.0999756}
   m_SizeDelta: {x: 150, y: 50}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &437305885
@@ -3327,6 +3327,7 @@ MonoBehaviour:
   SGamerText: {fileID: 63273781}
   UITournament:
     MainScreen: {fileID: 203521198}
+    UpperHeaderText: {fileID: 1428869770}
     LowerHeaderText: {fileID: 816027920}
     TimerText: {fileID: 287862956}
     FotterText: {fileID: 147840191}
@@ -8958,7 +8959,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -304.5, y: -4.100006}
+  m_AnchoredPosition: {x: -304.5, y: -4.0999756}
   m_SizeDelta: {x: 86.6055, y: 50}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1329199256
@@ -12647,7 +12648,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2.2000122, y: -4.100006}
+  m_AnchoredPosition: {x: -2.2000122, y: -4.0999756}
   m_SizeDelta: {x: 150, y: 50}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1914470375
