@@ -21,6 +21,7 @@ public class HappyHourUI
 public class TournamentUI
 {
     public GameObject MainScreen;
+    public TextMeshProUGUI UpperHeaderText;
     public TextMeshProUGUI LowerHeaderText;
     public TextMeshProUGUI TimerText;
     public TextMeshProUGUI FotterText;

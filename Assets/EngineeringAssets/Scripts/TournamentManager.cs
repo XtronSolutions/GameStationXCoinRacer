@@ -51,6 +51,8 @@ public class TournamentData
     public string HappyHourText { get; set; }
 
     public bool IsDevBuild { get; set; }
+
+    public string HeaderText { get; set; }
 }
 
 public class TournamentManager : MonoBehaviour
@@ -192,7 +194,7 @@ public class TournamentManager : MonoBehaviour
                         Constants.TournamentActive = true;
                         RemainingTime = TimeSpan.FromSeconds(RemainingTimeSeconds);
                         ManipulateTournamnetUIActivness(true, true, true, false, false, false);
-                        ManipulateTournamnetUIData("Week " + _data.Week.ToString(), RemainingTime.Days.ToString() + ":" + RemainingTime.Hours.ToString() + ":" + RemainingTime.Minutes.ToString() + ":" + RemainingTime.Seconds.ToString(), "*Entry Ticket : " + _data.TicketPrice.ToString() + " $GAMER");
+                        ManipulateTournamnetUIData("Week " + _data.Week.ToString(), RemainingTime.Days.ToString() + ":" + RemainingTime.Hours.ToString() + ":" + RemainingTime.Minutes.ToString() + ":" + RemainingTime.Seconds.ToString(), "*Entry Ticket : " + _data.TicketPrice.ToString() + " $GAMER",_data.HeaderText);
                         StartTimer = true;
                         TournamentStartTimer = false;
                     }
@@ -338,13 +340,14 @@ public class TournamentManager : MonoBehaviour
         }
     }
 
-    public void ManipulateTournamnetUIData(string LowerHeaderText, string TimerText, string FotterText)
+    public void ManipulateTournamnetUIData(string LowerHeaderText, string TimerText, string FotterText,string UpperHeaderText)
     {
         if (MainMenuViewController.Instance) //if instance of UI class is created
         {
             MainMenuViewController.Instance.UITournament.LowerHeaderText.text = LowerHeaderText;
             MainMenuViewController.Instance.UITournament.TimerText.text = TimerText;
             MainMenuViewController.Instance.UITournament.FotterText.text = FotterText;
+            MainMenuViewController.Instance.UITournament.UpperHeaderText.text = UpperHeaderText;
         }
     }
 
